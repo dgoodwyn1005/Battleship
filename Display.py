@@ -12,7 +12,6 @@ class Display(object):
         self.screen.fill(background)
         self.running = True
 
-
     def startDisplay(self, gameLoop):
         while self.running:
             for event in pygame.event.get():
