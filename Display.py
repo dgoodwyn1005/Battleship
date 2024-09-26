@@ -28,4 +28,7 @@ class Display(object):
     def blit(self, image, position):
         self.screen.blit(image, position)
 
+    def get_width(self):
+        return self.screen.get_width()
+
 
