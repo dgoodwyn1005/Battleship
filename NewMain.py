@@ -46,10 +46,18 @@ class BattleScreen(D.Display):
         # Initialize Game Grid
         grid = GameGrid.gamegrid(C.NUM_ROWS, C.NUM_COL)
 
+        #Draw grid and create buttons at respective locations
+        buttons_array = []
+        x_offset = 150
+        y_offset = 50
         for x in range(grid.grid_length()):
             for y in range(grid.grid_height()):
-                D.Display.blit(self, self.water_tile, (x * C.TILE_WIDTH, y * C.TILE_HEIGHT))
-                D.Display.blit(self, self.grid_tile, (x * C.TILE_WIDTH, y * C.TILE_HEIGHT))
+                D.Display.blit(self, self.water_tile, (x * C.TILE_WIDTH + x_offset, y * C.TILE_HEIGHT + y_offset))
+                D.Display.blit(self, self.grid_tile, (x * C.TILE_WIDTH + x_offset, y * C.TILE_HEIGHT + y_offset))
+
+                #Add buttons to list
+                gridButton = B.Button(x * C.TILE_WIDTH + x_offset, y * C.TILE_HEIGHT + y_offset, C.TILE_WIDTH, C.TILE_HEIGHT, chr(y + 97) + str(x+1), C.font, (0,0,0), (101,100,100))
+                buttons_array.append(gridButton)
 
         # Draw the player turn message
         turn_text = C.font.render(turn_message, True, C.WHITE_FONT_COLOR)
@@ -65,6 +73,11 @@ class BattleScreen(D.Display):
 
         # Draw pause button
         self.pause_button.draw(self.screen)
+
+        #Check if buttons are clicked
+        for i in buttons_array:
+            if i.is_clicked():
+                print(i.text)
 
         pygame.display.flip()
 
