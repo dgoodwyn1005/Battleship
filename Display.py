@@ -12,7 +12,6 @@ class Display(object):
         self.screen.fill(background)
         self.running = True
 
-
     def startDisplay(self, gameLoop):
         while self.running:
             for event in pygame.event.get():
@@ -27,5 +26,8 @@ class Display(object):
 
     def blit(self, image, position):
         self.screen.blit(image, position)
+
+    def get_width(self):
+        return self.screen.get_width()
 
 
