@@ -4,6 +4,7 @@ import Constants as C
 import Display as D
 import GameGrid
 import Button as B
+import GameDisplay
 
 
 class BattleScreen(D.Display):
@@ -41,7 +42,10 @@ class BattleScreen(D.Display):
         # Player and opponent names, and turn message
         player_name = "Player1"
         opponent_name = "Player2"
-        turn_message = "Turn: Player1"
+        turn_message = "Player1"
+
+        # Create Game Display object
+        game_display = GameDisplay.GameDisplay(self.screen)
 
         # Initialize Game Grid
         grid = GameGrid.gamegrid(C.NUM_ROWS, C.NUM_COL)
@@ -60,16 +64,10 @@ class BattleScreen(D.Display):
                 buttons_array.append(gridButton)
 
         # Draw the player turn message
-        turn_text = C.font.render(turn_message, True, C.WHITE_FONT_COLOR)
-        D.Display.blit(self, turn_text, (D.Display.get_width(self) // 2 - turn_text.get_width() // 2, 20))
+        game_display.draw_turn_indicator(turn_message)
 
-        # Draw the player name in the left corner
-        player_text = C.font.render(f"Player: {player_name}", True, C.WHITE_FONT_COLOR)
-        D.Display.blit(self, player_text, (0, 0))
-
-        # Draw the opponent name in the right corner
-        opponent_text = C.font.render(f"Opponent: {opponent_name}", True, C.WHITE_FONT_COLOR)
-        D.Display.blit(self, opponent_text, (D.Display.get_width(self) - opponent_text.get_width(), 0))
+        # Draw the player names in the corners
+        game_display.draw_names(player_name, opponent_name)
 
         # Draw pause button
         self.pause_button.draw(self.screen)
