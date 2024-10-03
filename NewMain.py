@@ -13,7 +13,7 @@ class BattleScreen(D.Display):
         super().__init__()
         self.running = True
         self.pause_button = B.Button(C.PAUSE_X, C.PAUSE_Y, C.PAUSE_WIDTH_HEIGHT, C.PAUSE_WIDTH_HEIGHT,
-                                     C.PAUSE_TEXT, C.font, C.BLACK_BACKGROUND_COLOR, C.WHITE_FONT_COLOR)
+                                     C.PAUSE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR)
 
         # Load Game Assets
         grid_tile = pygame.image.load(C.IMAGE_FOLDER + "/grid.png")
@@ -36,6 +36,8 @@ class BattleScreen(D.Display):
                 # Check if it is clicked
                 if self.pause_button.is_clicked():
                     print("Clicked")
+            
+
 
     def create_grid(self):
 
