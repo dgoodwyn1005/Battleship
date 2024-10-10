@@ -42,15 +42,17 @@ IMAGE_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 
 # Music button
 OPTIONS_CAPTION = "Options"
-MUSIC_X = 300
+MUSIC_X = 610
 MUSIC_Y = 300
-MUSIC_WIDTH_HEIGHT = 50
+MUSIC_WIDTH = 100
+MUSIC_HEIGHT = 60
 MUSIC_TEXT = "Toggle Music"
 
 # Sounds button
-SOUNDS_X = 405
+SOUNDS_X = 715
 SOUNDS_Y = 300
-SOUNDS_WIDTH_HEIGHT = 70
+SOUNDS_WIDTH = 100
+SOUNDS_HEIGHT = 60
 SOUNDS_TEXT = "Toggle Sounds"
 
 # Back button
