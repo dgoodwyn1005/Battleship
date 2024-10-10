@@ -7,6 +7,7 @@ import Button as B
 import GameDisplay
 import Ships as S
 import OptionsScreen as OS
+import MainMenu as MM
 
 
 class BattleScreen(D.Display):
@@ -16,7 +17,7 @@ class BattleScreen(D.Display):
         self.running = True
         self.placeShips = True
         self.pause_button = B.Button(C.PAUSE_X, C.PAUSE_Y, C.PAUSE_WIDTH_HEIGHT, C.PAUSE_WIDTH_HEIGHT,
-                                     C.PAUSE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR)
+                                     C.PAUSE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR, C.HOVER_COLOR)
 
         # Load Game Assets
 
@@ -112,7 +113,8 @@ class BattleScreen(D.Display):
 
         pygame.display.flip()
 
-
+main_menu = MM.Main_Menu()
+main_menu.main_loop()
 battle = BattleScreen()
 battle.create_grid()
 battle.main_loop()

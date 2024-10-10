@@ -32,10 +32,43 @@ DEFAULT_CAPTION = "Battleship"
 BLACK_BACKGROUND_COLOR = (0, 0, 0)
 RED = (255, 0, 0)
 GREY = (128, 128, 128)
+HOVER_COLOR = (150, 150, 150)
 BLUE = (24, 123, 205)
 
 # IMAGES
 IMAGE_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/images"
+
+# MAIN MENU
+MENU_CAPTION = "Main Menu"
+MENU_TEXT = "Battleship!!!"
+
+# Text
+MENU_FONT_SIZE = 200
+MENU_FONT = pygame.font.Font(None, MENU_FONT_SIZE)
+TEXT_X = 700
+TEXT_Y = 100
+
+
+# Start button
+START_X = 600
+START_Y = 300
+START_WIDTH = 200
+START_HEIGHT = 50
+START_TEXT = "Start"
+
+# Options button
+OPTIONS_X = 600
+OPTIONS_Y = 400
+OPTIONS_WIDTH = 200
+OPTIONS_HEIGHT = 50
+OPTIONS_TEXT = "Options"
+
+# Quit button
+QUIT_X = 600
+QUIT_Y = 500
+QUIT_WIDTH = 200
+QUIT_HEIGHT = 50
+QUIT_TEXT = "Quit"
 
 
 # OPTIONS SCREEN

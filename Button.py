@@ -13,7 +13,7 @@ class Button:
         self.text = text  
         self.font = font  
         self.color = color  
-        self.text_color = text_color  
+        self.text_color = text_color
 
     def draw(self, screen: pygame.Surface):
         # Draw the button rectangle
@@ -30,7 +30,6 @@ class Button:
 
     def is_clicked(self):
         
-        #Check if the button is pressed, true if it is, false if it isnt
+        #Check if the button is pressed
         return self.rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]
-
 
