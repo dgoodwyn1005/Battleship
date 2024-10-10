@@ -1,8 +1,9 @@
 import pygame
-
+import Constants as C
 class Display(object):
 
-    def __init__(self, width = 800, height = 600, screenName = "BattleShip", background = (0, 0, 0)):
+    def __init__(self, width = C.DISPLAY_WIDTH, height = C.DISPLAY_HEIGHT,
+                 screenName = C.DEFAULT_CAPTION, background = C.BLACK_BACKGROUND_COLOR):
         self.width = width
         self.height = height
         self.screenName = screenName
@@ -19,7 +20,6 @@ class Display(object):
                     self.running = False
             gameLoop()
             pygame.display.flip()
-
 
     def changeDimensions(self, width, height):
         self.screen = pygame.display.set_mode((width, height))
