@@ -17,7 +17,7 @@ class GameDisplay:
     # Draw the turn indicator in the center
     def draw_turn_indicator(self, current_player):
         turn_text = self.font.render(f"Turn: {current_player}", True, C.WHITE_FONT_COLOR)
-        text_rect = turn_text.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 14))
+        text_rect = turn_text.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() - 25))
         self.screen.blit(turn_text, text_rect)
 
 

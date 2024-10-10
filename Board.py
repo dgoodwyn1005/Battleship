@@ -7,6 +7,8 @@ import Button as B
 import GameDisplay
 import Ships as S
 import OptionsScreen as OS
+import MainMenu as MM
+
 
 
 class BattleScreen(D.Display):
@@ -16,7 +18,7 @@ class BattleScreen(D.Display):
         self.running = True
         self.placeShips = True
         self.pause_button = B.Button(C.PAUSE_X, C.PAUSE_Y, C.PAUSE_WIDTH_HEIGHT, C.PAUSE_WIDTH_HEIGHT,
-                                     C.PAUSE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR)
+                                     C.PAUSE_TEXT, C.font, C.GREY, C.HOVER_COLOR)
 
         # Load Game Assets
 
@@ -36,6 +38,7 @@ class BattleScreen(D.Display):
         self.destroyer_ship = S.Ships("destroyer", 1)
         self.ships = [self.carrier_ship, self.battle_ship, self.cruiser_ship, self.submarine_ship, self.destroyer_ship]
         self.ship_count = 0
+
 
 
 
@@ -59,7 +62,7 @@ class BattleScreen(D.Display):
 
                 # Check if buttons are clicked
                 for button in self.button_list:
-                    if button.is_clicked():
+                    if button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
                         # Place ships on the grid
                         if self.placeShips and self.ship_count < 5:
                                 current_ship = self.ships[self.ship_count].load_ship_image()
@@ -86,6 +89,7 @@ class BattleScreen(D.Display):
 
         # Create Game Display object
         game_display = GameDisplay.GameDisplay(self.screen)
+        game_display.font = C.GAME_FONT
 
         # Initialize Game Grid
         grid = GameGrid.gamegrid(C.NUM_ROWS, C.NUM_COL)
@@ -98,8 +102,18 @@ class BattleScreen(D.Display):
 
                 # Add buttons to list
                 gridButton = B.Button(x * C.TILE_WIDTH + C.X_OFFSET, y * C.TILE_HEIGHT + C.Y_OFFSET, C.TILE_WIDTH,
-                                      C.TILE_HEIGHT, chr(y + 97) + str(x + 1), C.font, (0, 0, 0), (101, 100, 100))
+                                      C.TILE_HEIGHT, chr(y + 97) + str(x + 1), C.font, C.BLACK_BACKGROUND_COLOR, C.LIGHT_GREY)
                 self.button_list.append(gridButton)
+
+            # Draw the grid coordinates
+            for x in range(grid.grid_length()):
+                coord = C.GAME_FONT.render(str(x + 1), True, C.DARK_GREEN)
+                coord_rect = coord.get_rect(center=((x * C.TILE_WIDTH + C.X_OFFSET) + C.TILE_WIDTH / 2, 55))
+                self.screen.blit(coord, coord_rect)
+            for y in range(grid.grid_height()):
+                coord = C.GAME_FONT.render(chr(y + 97), True, C.DARK_GREEN)
+                coord_rect = coord.get_rect(center=(30, (y * C.TILE_HEIGHT + C.Y_OFFSET) + C.TILE_HEIGHT / 2))
+                self.screen.blit(coord, coord_rect)
 
         # Draw the player turn message
         game_display.draw_turn_indicator(turn_message)
@@ -112,7 +126,8 @@ class BattleScreen(D.Display):
 
         pygame.display.flip()
 
-
+# main_menu = MM.Main_Menu()
+# main_menu.main_loop()
 battle = BattleScreen()
 battle.create_grid()
 battle.main_loop()

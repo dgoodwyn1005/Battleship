@@ -3,7 +3,7 @@ import Constants as C
 class Display(object):
 
     def __init__(self, width = C.DISPLAY_WIDTH, height = C.DISPLAY_HEIGHT,
-                 screenName = C.DEFAULT_CAPTION, background = C.BLACK_BACKGROUND_COLOR):
+                 screenName = C.DEFAULT_CAPTION, background = C.LIGHTER_BLUE_COLOR):
         self.width = width
         self.height = height
         self.screenName = screenName
