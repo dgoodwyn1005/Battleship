@@ -1,5 +1,5 @@
 import pygame.display
-
+import Board as BG
 import Display as D
 import Constants as C
 import Button as B
@@ -40,6 +40,8 @@ class Main_Menu(D.Display):
 
                 if self.start_button.is_clicked():
                     print("Start Game")  # Transition to game loop
+                    battle_screen = BG.BattleScreen()
+                    D.Display.startDisplay(battle_screen, battle_screen.main_loop())
                     running = False
                 if self.options_button.is_clicked():
                     print("Options Selected")  # Transition to options screen
@@ -47,4 +49,6 @@ class Main_Menu(D.Display):
                     D.Display.startDisplay(op_screen, op_screen.main_loop)
                 if self.quit_button.is_clicked():
                     pygame.quit()
-                    exit()
+
+screen = Main_Menu()
+D.Display.startDisplay(screen, screen.main_loop())

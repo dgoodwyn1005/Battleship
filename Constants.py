@@ -3,14 +3,21 @@ import pygame
 pygame.init()
 # CONSTANTS
 
+# IMAGES Folder
+IMAGE_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/images"
+
+# FONTS Folder
+FONTS_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/fonts"
+
 # GRID
 TILE_WIDTH = 40
 TILE_HEIGHT = 40
 TILE_TRANSPARENCY = 128
 NUM_ROWS = 10
 NUM_COL = 10
-X_OFFSET = 150
-Y_OFFSET = 50
+X_OFFSET = 55
+Y_OFFSET = 75
+GAME_FONT = pygame.font.Font(FONTS_FOLDER + "/ka1.ttf", 20)
 
 # TEXT
 WHITE_FONT_COLOR = (255, 255, 255)
@@ -30,15 +37,16 @@ DEFAULT_CAPTION = "Battleship"
 
 # COLOR
 BLACK_BACKGROUND_COLOR = (0, 0, 0)
+LIGHTER_BLUE_COLOR = (100, 170, 210)
 RED = (255, 0, 0)
 GREY = (128, 128, 128)
-HOVER_COLOR = (150, 150, 150)
 BLUE = (24, 123, 205)
+LIGHT_GREY = (101, 100, 100)
+DARK_GREEN = (105, 135, 165)
+HOVER_COLOR = (150, 150, 150)
 
-# IMAGES
-IMAGE_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/images"
 
-# MAIN MENU
+# MAIN MENU SCREEN
 MENU_CAPTION = "Main Menu"
 MENU_TEXT = "Battleship!!!"
 
@@ -70,7 +78,6 @@ QUIT_WIDTH = 200
 QUIT_HEIGHT = 50
 QUIT_TEXT = "Quit"
 
-
 # OPTIONS SCREEN
 
 # Music button
@@ -93,6 +100,4 @@ BACK_X = 0
 BACK_Y = 0
 BACK_WIDTH_HEIGHT = 50
 BACK_TEXT = "Back"
-
-
 
