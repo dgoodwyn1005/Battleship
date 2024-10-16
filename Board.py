@@ -126,6 +126,7 @@ class BattleScreen(D.Display):
 
         pygame.display.flip()
 
+
 # main_menu = MM.Main_Menu()
 # main_menu.main_loop()
 battle = BattleScreen()

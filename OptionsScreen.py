@@ -1,5 +1,4 @@
 import pygame.display
-
 import Display as D
 import Constants as C
 import Button as B
@@ -19,6 +18,7 @@ class Options_Screen(D.Display):
                                     C.font, C.GREY, C.WHITE_FONT_COLOR)
         self.game_display = GD.GameDisplay(self.screen)
         self.draw_buttons_and_settings()
+        self.running = True
 
     def draw_buttons_and_settings(self):
         # Draw buttons
@@ -26,7 +26,7 @@ class Options_Screen(D.Display):
         self.music_button.draw(self.screen)
         self.sounds_button.draw(self.screen)
         self.back_button.draw(self.screen)
-        self.game_display.draw_settings(self.play_music, self.play_sound_effects)
+        self.game_display.draw_settings("On" if self.play_music else "Off", "On" if self.play_sound_effects else "Off")
         pygame.display.flip()
 
 
@@ -45,16 +45,16 @@ class Options_Screen(D.Display):
 
 
     def main_loop(self):
-        if self.music_button.is_clicked():
-            self.toggle_music()
-            print("Music: ", self.play_music)
-        elif self.sounds_button.is_clicked():
-            self.toggle_sound_effects()
-            print("Sound Effects: ", self.play_sound_effects)
-        elif self.back_button.is_clicked():
-            self.go_back()
+        for event in pygame.event.get():
+            if self.music_button.is_clicked():
+                self.toggle_music()
+                print("Music: ", self.play_music)
+            elif self.sounds_button.is_clicked():
+                self.toggle_sound_effects()
+                print("Sound Effects: ", self.play_sound_effects)
+            elif self.back_button.is_clicked():
+                self.go_back()
 
 
 # screen = Options_Screen()
 # D.Display.startDisplay(screen, screen.main_loop)
-

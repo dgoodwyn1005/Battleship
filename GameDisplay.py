@@ -27,3 +27,4 @@ class GameDisplay:
         self.screen.blit(music_text, (self.screen.get_width() // 2 - 35, 50))
         self.screen.blit(sounds_text, (self.screen.get_width() // 2 - 35, 30))
 
+

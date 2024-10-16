@@ -30,4 +30,3 @@ class Display(object):
     def get_width(self):
         return self.screen.get_width()
 
-

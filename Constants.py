@@ -101,5 +101,3 @@ BACK_Y = 0
 BACK_WIDTH_HEIGHT = 50
 BACK_TEXT = "Back"
 
-
-
