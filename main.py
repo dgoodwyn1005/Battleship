@@ -1,3 +1,6 @@
+import MainMenu
+screen = MainMenu()
+
 #Battleship game using pygame!
 #Contains the main game loop
 
