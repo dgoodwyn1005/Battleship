@@ -5,6 +5,7 @@ import Constants as C
 import Button as B
 import GameDisplay as GD
 import OptionsScreen as OS
+#from TextInput import TextInput
 
 class Main_Menu(D.Display):
     def __init__(self):
@@ -22,6 +23,21 @@ class Main_Menu(D.Display):
 
     def draw_buttons_and_text(self):
         self.screen.fill(C.BLUE)
+        # Detect mouse hover and change button colors accordingly
+        if self.start_button.is_hovered():
+            self.start_button.color = C.HOVER_COLOR
+        else:
+            self.start_button.color = C.GREY
+
+        if self.options_button.is_hovered():
+            self.options_button.color = C.HOVER_COLOR
+        else:
+            self.options_button.color = C.GREY
+
+        if self.quit_button.is_hovered():
+            self.quit_button.color = C.HOVER_COLOR
+        else:
+            self.quit_button.color = C.GREY
         self.start_button.draw(self.screen)
         self.options_button.draw(self.screen)
         self.quit_button.draw(self.screen)
@@ -49,6 +65,7 @@ class Main_Menu(D.Display):
                     D.Display.startDisplay(op_screen, op_screen.main_loop)
                 if self.quit_button.is_clicked():
                     pygame.quit()
+            self.draw_buttons_and_text()
 
 screen = Main_Menu()
 D.Display.startDisplay(screen, screen.main_loop())

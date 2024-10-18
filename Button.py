@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Wed Sep 18 20:18:45 2024
 
-@author: alepine
-"""
 
 import pygame
 
@@ -34,3 +30,7 @@ class Button:
         
         #Check if the button is pressed, true if it is, false if it isnt
         return self.rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]
+    
+    def is_hovered(self):
+        #Check if the mouse is hovering over the button
+        return self.rect.collidepoint(pygame.mouse.get_pos())

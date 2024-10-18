@@ -50,6 +50,11 @@ HOVER_COLOR = (150, 150, 150)
 MENU_CAPTION = "Main Menu"
 MENU_TEXT = "Battleship!!!"
 
+INPUT_X = 100  
+INPUT_Y = 400  
+INPUT_WIDTH = 300  
+INPUT_HEIGHT = 50  
+
 # Text
 MENU_FONT_SIZE = 200
 MENU_FONT = pygame.font.Font(None, MENU_FONT_SIZE)

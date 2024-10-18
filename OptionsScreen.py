@@ -23,9 +23,25 @@ class Options_Screen(D.Display):
     def draw_buttons_and_settings(self):
         # Draw buttons
         self.screen.fill(C.BLUE)
+        # Check for hover and change button colors
+        if self.music_button.is_hovered():
+            self.music_button.color = C.HOVER_COLOR
+        else:
+            self.music_button.color = C.GREY
+
+        if self.sounds_button.is_hovered():
+            self.sounds_button.color = C.HOVER_COLOR
+        else:
+            self.sounds_button.color = C.GREY
+
+        if self.back_button.is_hovered():
+            self.back_button.color = C.HOVER_COLOR
+        else:
+            self.back_button.color = C.GREY
         self.music_button.draw(self.screen)
         self.sounds_button.draw(self.screen)
         self.back_button.draw(self.screen)
+
         self.game_display.draw_settings("On" if self.play_music else "Off", "On" if self.play_sound_effects else "Off")
         pygame.display.flip()
 
@@ -54,6 +70,7 @@ class Options_Screen(D.Display):
                 print("Sound Effects: ", self.play_sound_effects)
             elif self.back_button.is_clicked():
                 self.go_back()
+        self.draw_buttons_and_settings()
 
 
 # screen = Options_Screen()
