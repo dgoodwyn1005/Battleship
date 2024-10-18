@@ -7,6 +7,7 @@ import GameDisplay as GD
 import OptionsScreen as OS
 #from TextInput import TextInput
 
+
 class Main_Menu(D.Display):
     def __init__(self):
         super().__init__(screenName= C.MENU_CAPTION, background= C.BLUE)
@@ -16,13 +17,13 @@ class Main_Menu(D.Display):
                                        C.font, C.GREY, C.WHITE_FONT_COLOR)
         self.quit_button = B.Button(C.QUIT_X, C.QUIT_Y, C.QUIT_WIDTH, C.QUIT_HEIGHT, C.QUIT_TEXT,
                                     C.font, C.GREY, C.WHITE_FONT_COLOR)
-        self.text = C.MENU_TEXT
-        self.font = C.MENU_FONT
+        # self.text = C.MENU_TEXT
         self.game_display = GD.GameDisplay(self.screen)
         self.draw_buttons_and_text()
 
     def draw_buttons_and_text(self):
-        self.screen.fill(C.BLUE)
+        # self.screen.fill(C.BLUE)
+
         # Detect mouse hover and change button colors accordingly
         if self.start_button.is_hovered():
             self.start_button.color = C.HOVER_COLOR
@@ -41,31 +42,36 @@ class Main_Menu(D.Display):
         self.start_button.draw(self.screen)
         self.options_button.draw(self.screen)
         self.quit_button.draw(self.screen)
-        self.text = self.font.render(self.text, True, C.WHITE_FONT_COLOR)
-        text_rect = self.text.get_rect(center=(C.TEXT_X, C.TEXT_Y))
-        self.screen.blit(self.text, text_rect)
+
+        # Rendering text
+        menu_font = pygame.font.SysFont(None, 25)
+        rendered_text = menu_font.render(C.MENU_TEXT, True, C.WHITE_FONT_COLOR)
+        text_rect = rendered_text.get_rect(center=(C.TEXT_X, C.TEXT_Y))
+        self.screen.blit(rendered_text, text_rect)
 
         pygame.display.flip()
 
     def main_loop(self):
-        running = True
-        while running:
+
+        while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
 
                 if self.start_button.is_clicked():
                     print("Start Game")  # Transition to game loop
                     battle_screen = BG.BattleScreen()
                     D.Display.startDisplay(battle_screen, battle_screen.main_loop())
-                    running = False
                 if self.options_button.is_clicked():
                     print("Options Selected")  # Transition to options screen
                     op_screen = OS.Options_Screen()
                     D.Display.startDisplay(op_screen, op_screen.main_loop)
                 if self.quit_button.is_clicked():
-                    pygame.quit()
-            self.draw_buttons_and_text()
 
-screen = Main_Menu()
-D.Display.startDisplay(screen, screen.main_loop())
+                  print("Quit Game")
+                    self.running = False
+
+
+if __name__ == "__main__":
+    screen = Main_Menu()
+    D.Display.startDisplay(screen, screen.main_loop())
