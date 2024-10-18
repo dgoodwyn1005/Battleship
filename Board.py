@@ -18,7 +18,7 @@ class BattleScreen(D.Display):
         self.running = True
         self.placeShips = True
         self.pause_button = B.Button(C.PAUSE_X, C.PAUSE_Y, C.PAUSE_WIDTH_HEIGHT, C.PAUSE_WIDTH_HEIGHT,
-                                     C.PAUSE_TEXT, C.font, C.GREY, C.HOVER_COLOR)
+                                     C.PAUSE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR)
 
         # Load Game Assets
 
@@ -75,7 +75,15 @@ class BattleScreen(D.Display):
                                 pygame.display.flip()
                         elif self.ship_count == 5:
                             self.placeShips = False
+            
+            if self.pause_button.is_hovered():
+                self.pause_button.color = C.HOVER_COLOR
+            else:
+                self.pause_button.color = C.GREY
+            
+            self.pause_button.draw(self.screen)
 
+            pygame.display.flip()
 
 
             
@@ -126,9 +134,9 @@ class BattleScreen(D.Display):
 
         pygame.display.flip()
 
-
-# main_menu = MM.Main_Menu()
-# main_menu.main_loop()
+#main_menu = MM.Main_Menu()
+#main_menu.main_loop()
 battle = BattleScreen()
 battle.create_grid()
+
 battle.main_loop()

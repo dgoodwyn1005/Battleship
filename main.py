@@ -1,2 +1,0 @@
-import MainMenu
-screen = MainMenu()
