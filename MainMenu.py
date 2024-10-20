@@ -67,7 +67,8 @@ class Main_Menu(D.Display):
                 if self.quit_button.is_clicked():
                     print("Quit Game")
                     self.running = False
-            self.draw_buttons_and_text()
+                self.screen.fill(C.BLUE)
+                self.draw_buttons_and_text()
 
 if __name__ == "__main__":
     screen = Main_Menu()
