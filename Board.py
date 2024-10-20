@@ -102,6 +102,10 @@ class BattleScreen(D.Display):
             
 
             pygame.display.flip()
+            self.pause_button.draw(self.screen)
+
+            pygame.display.flip()
+
 
             
 
@@ -155,3 +159,4 @@ class BattleScreen(D.Display):
 if __name__ == "__main__":
     battle = BattleScreen()
     battle.main_loop()
+

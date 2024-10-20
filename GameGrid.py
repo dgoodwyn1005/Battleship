@@ -22,4 +22,3 @@ class GameGrid(object):
 
     def grid_height(self):
         return self.height
-
