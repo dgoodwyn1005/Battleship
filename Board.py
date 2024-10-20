@@ -2,12 +2,11 @@ import pygame
 import pygame.image
 import Constants as C
 import Display as D
-import GameGrid
+import GameGrid as GG
 import Button as B
 import GameDisplay
 import Ships as S
 import OptionsScreen as OS
-import MainMenu as MM
 
 
 
@@ -29,6 +28,12 @@ class BattleScreen(D.Display):
         self.water_tile = pygame.image.load(C.IMAGE_FOLDER + "/water_tile.jpg")
         self.water_tile = pygame.transform.scale(self.water_tile, (C.TILE_WIDTH, C.TILE_HEIGHT))
         self.button_list = []
+        # Create Grid object
+        self.grid = GG.GameGrid(C.NUM_ROWS, C.NUM_COL)
+
+        # Create Game Display object
+        self.game_display = GameDisplay.GameDisplay(self.screen)
+        self.game_display.font = C.GAME_FONT
 
         # Load Ships
         self.carrier_ship = S.Ships("aircraft_carrier", 5)
@@ -38,8 +43,9 @@ class BattleScreen(D.Display):
         self.destroyer_ship = S.Ships("destroyer", 1)
         self.ships = [self.carrier_ship, self.battle_ship, self.cruiser_ship, self.submarine_ship, self.destroyer_ship]
         self.ship_count = 0
-
-
+        self.message = "Place your ships"
+        self.startedBoard = True
+        self.create_grid()
 
 
     # Main Game Loop
@@ -57,22 +63,35 @@ class BattleScreen(D.Display):
                 if self.pause_button.is_clicked():
                     op_screen = OS.Options_Screen()
                     D.Display.startDisplay(op_screen, op_screen.main_loop)
+                    self.screen.fill(C.LIGHTER_BLUE_COLOR)
+                    self.create_grid()
                     print("Clicked")
 
 
                 # Check if buttons are clicked
                 for button in self.button_list:
                     if button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
+
                         # Place ships on the grid
                         if self.placeShips and self.ship_count < 5:
                                 current_ship = self.ships[self.ship_count].load_ship_image()
                                 ship_size = self.ships[self.ship_count].length
+
                                 # Scale the ship to the correct size based on the ship length
                                 current_ship = pygame.transform.scale(current_ship,
                                                                       (C.TILE_WIDTH, C.TILE_HEIGHT*ship_size))
-                                D.Display.blit(self, current_ship, (button.x, button.y))
-                                self.ship_count += 1
+
+                                # Because the tiles are offset by 40 pixels, we divide by 40 to get the correct grid location
+                                if button.y//40 + ship_size <= 11:
+                                    self.grid.update_grid(button.x//40 - 1, button.y//40 - 1, ship_size)
+                                    self.screen.blit(current_ship, (button.x, button.y))
+                                    self.ship_count += 1
+                                else:
+                                    self.message = "Ship out of bounds"
+                                    print("Ship out of bounds")
+                                self.game_display.draw_message(self.message)
                                 pygame.display.flip()
+
                         elif self.ship_count == 5:
                             self.placeShips = False
             
@@ -81,6 +100,8 @@ class BattleScreen(D.Display):
             else:
                 self.pause_button.color = C.GREY
             
+
+            pygame.display.flip()
             self.pause_button.draw(self.screen)
 
             pygame.display.flip()
@@ -95,48 +116,47 @@ class BattleScreen(D.Display):
         opponent_name = "Player2"
         turn_message = "Player1"
 
-        # Create Game Display object
-        game_display = GameDisplay.GameDisplay(self.screen)
-        game_display.font = C.GAME_FONT
 
-        # Initialize Game Grid
-        grid = GameGrid.gamegrid(C.NUM_ROWS, C.NUM_COL)
+
 
         #Draw grid and create buttons at respective locations
-        for x in range(grid.grid_length()):
-            for y in range(grid.grid_height()):
+        for x in range(self.grid.grid_length()):
+            for y in range(self.grid.grid_height()):
                 D.Display.blit(self, self.water_tile, (x * C.TILE_WIDTH + C.X_OFFSET, y * C.TILE_HEIGHT + C.Y_OFFSET))
                 D.Display.blit(self, self.grid_tile, (x * C.TILE_WIDTH + C.X_OFFSET, y * C.TILE_HEIGHT + C.Y_OFFSET))
 
                 # Add buttons to list
                 gridButton = B.Button(x * C.TILE_WIDTH + C.X_OFFSET, y * C.TILE_HEIGHT + C.Y_OFFSET, C.TILE_WIDTH,
                                       C.TILE_HEIGHT, chr(y + 97) + str(x + 1), C.font, C.BLACK_BACKGROUND_COLOR, C.LIGHT_GREY)
-                self.button_list.append(gridButton)
+                if self.startedBoard:
+                    self.button_list.append(gridButton)
 
             # Draw the grid coordinates
-            for x in range(grid.grid_length()):
+            for x in range(self.grid.grid_length()):
                 coord = C.GAME_FONT.render(str(x + 1), True, C.DARK_GREEN)
                 coord_rect = coord.get_rect(center=((x * C.TILE_WIDTH + C.X_OFFSET) + C.TILE_WIDTH / 2, 55))
                 self.screen.blit(coord, coord_rect)
-            for y in range(grid.grid_height()):
+            for y in range(self.grid.grid_height()):
                 coord = C.GAME_FONT.render(chr(y + 97), True, C.DARK_GREEN)
                 coord_rect = coord.get_rect(center=(30, (y * C.TILE_HEIGHT + C.Y_OFFSET) + C.TILE_HEIGHT / 2))
                 self.screen.blit(coord, coord_rect)
-
+        self.startedBoard = False
         # Draw the player turn message
-        game_display.draw_turn_indicator(turn_message)
+        self.game_display.draw_turn_indicator(turn_message)
 
         # Draw the player names in the corners
-        game_display.draw_names(player_name, opponent_name)
+        self.game_display.draw_names(player_name, opponent_name)
 
         # Draw pause button
         self.pause_button.draw(self.screen)
 
+        # Draw the message on the screen
+        self.game_display.draw_message(self.message)
+
         pygame.display.flip()
 
-#main_menu = MM.Main_Menu()
-#main_menu.main_loop()
-battle = BattleScreen()
-battle.create_grid()
 
-battle.main_loop()
+if __name__ == "__main__":
+    battle = BattleScreen()
+    battle.main_loop()
+
