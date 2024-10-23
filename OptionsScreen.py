@@ -8,6 +8,7 @@ class Options_Screen(D.Display):
 
     play_music = True
     play_sound_effects = True
+
     def __init__(self):
         super().__init__(screenName= C.OPTIONS_CAPTION, background= C.BLUE)
         self.music_button = B.Button(C.MUSIC_X, C.MUSIC_Y, C.MUSIC_WIDTH, C.MUSIC_HEIGHT, C.MUSIC_TEXT,

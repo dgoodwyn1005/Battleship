@@ -26,6 +26,7 @@ class Button(object):
         # Draw the text
         screen.blit(text_surface, text_rect)
 
+
     def is_clicked(self):
         #Check if the button is pressed, true if it is, false if it isnt
         return self.rect.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]
