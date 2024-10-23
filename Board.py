@@ -18,6 +18,8 @@ class BattleScreen(D.Display):
         self.placeShips = True
         self.pause_button = B.Button(C.PAUSE_X, C.PAUSE_Y, C.PAUSE_WIDTH_HEIGHT, C.PAUSE_WIDTH_HEIGHT,
                                      C.PAUSE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR)
+        self.rotate_button = B.Button(C.ROTATE_X, C.ROTATE_Y, C.ROTATE_WIDTH_HEIGHT, C.ROTATE_WIDTH_HEIGHT,
+                                      C.ROTATE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR)
 
         # Load Game Assets
 
@@ -43,7 +45,8 @@ class BattleScreen(D.Display):
         self.destroyer_ship = S.Ships("destroyer", 1)
         self.ships = [self.carrier_ship, self.battle_ship, self.cruiser_ship, self.submarine_ship, self.destroyer_ship]
         self.ship_count = 0
-        self.message = "Place your ships"
+        self.message = "Place " + self.ships[self.ship_count].name + " " + str(self.ships[self.ship_count].length)
+        self.ship_preview = self.ships[self.ship_count]
         self.startedBoard = True
         self.create_grid()
 
@@ -51,7 +54,8 @@ class BattleScreen(D.Display):
     # Main Game Loop
 
     def main_loop(self):
-
+        # Draw the ship on the screen
+        self.draw_preview_ship()
         while self.running:
 
             for event in pygame.event.get():
@@ -66,6 +70,10 @@ class BattleScreen(D.Display):
                     self.screen.fill(C.LIGHTER_BLUE_COLOR)
                     self.create_grid()
                     print("Clicked")
+                if self.rotate_button.is_clicked():
+                    self.ship_preview.rotated = not self.ship_preview.rotated
+                    self.draw_preview_ship()
+
 
 
                 # Check if buttons are clicked
@@ -74,20 +82,41 @@ class BattleScreen(D.Display):
 
                         # Place ships on the grid
                         if self.placeShips and self.ship_count < 5:
-                                current_ship = self.ships[self.ship_count].load_ship_image()
-                                ship_size = self.ships[self.ship_count].length
+                                current_ship = self.ships[self.ship_count]
+                                loaded_ship = current_ship.load_ship_image()
 
                                 # Scale the ship to the correct size based on the ship length
-                                current_ship = pygame.transform.scale(current_ship,
-                                                                      (C.TILE_WIDTH, C.TILE_HEIGHT*ship_size))
+                                loaded_ship = pygame.transform.scale(loaded_ship,
+                                                                      (C.TILE_WIDTH, C.TILE_HEIGHT*current_ship.length))
+                                if current_ship.rotated:
+                                    loaded_ship = pygame.transform.rotate(loaded_ship, 90)
 
+                                tile_check = self.grid.check_tile(button.x//40 - 1, button.y//40 - 1)
                                 # Because the tiles are offset by 40 pixels, we divide by 40 to get the correct grid location
-                                if button.y//40 + ship_size <= 11:
-                                    self.grid.update_grid(button.x//40 - 1, button.y//40 - 1, ship_size)
-                                    self.screen.blit(current_ship, (button.x, button.y))
+                                if ((button.y//40 + current_ship.length <= 11 and not current_ship.rotated)
+                                        or (button.x//40 + current_ship.length <= 11 and current_ship.rotated)) and tile_check:
+                                    self.grid.update_grid(button.x//40 - 1, button.y//40 - 1, current_ship.length, current_ship)
+
+                                    #Update coordinate on ship
+                                    current_ship.head_coordinate = (button.x//40 - 1, button.y//40 - 1)
+
+                                    # Draw the ship on the screen
+                                    self.screen.blit(loaded_ship, (button.x, button.y))
                                     self.ship_count += 1
+
+                                    # Update the message to display the next ship
+                                    if self.ship_count < 5:
+                                        self.message = ("Place " + self.ships[self.ship_count].name + " " +
+                                                    str(self.ships[self.ship_count].length))
+
+                                        # Update preview ship
+                                        self.ship_preview = self.ships[self.ship_count]
+
+                                    # Draw the ship on the screen
+                                    self.draw_preview_ship()
                                 else:
-                                    self.message = "Ship out of bounds"
+                                    # Display message if ship is out of bounds
+                                    self.message = "Ship out of bounds: " + str(current_ship.length) + " spaces"
                                     print("Ship out of bounds")
                                 self.game_display.draw_message(self.message)
                                 pygame.display.flip()
@@ -99,7 +128,9 @@ class BattleScreen(D.Display):
                 self.pause_button.color = C.HOVER_COLOR
             else:
                 self.pause_button.color = C.GREY
-            
+
+            # Redraw the pause button with the updated color
+            self.pause_button.draw(self.screen)
 
             pygame.display.flip()
             self.pause_button.draw(self.screen)
@@ -115,8 +146,6 @@ class BattleScreen(D.Display):
         player_name = "Player1"
         opponent_name = "Player2"
         turn_message = "Player1"
-
-
 
 
         #Draw grid and create buttons at respective locations
@@ -150,10 +179,33 @@ class BattleScreen(D.Display):
         # Draw pause button
         self.pause_button.draw(self.screen)
 
+        # Draw rotate button
+        self.rotate_button.draw(self.screen)
+
         # Draw the message on the screen
         self.game_display.draw_message(self.message)
 
         pygame.display.flip()
+
+    def draw_preview_ship(self):
+        # Clear previous ship preview by drawing a rectangle
+        message_rect = pygame.Rect(C.SHIP_PREVIEW_X, C.SHIP_PREVIEW_Y, C.TILE_WIDTH+200, C.TILE_HEIGHT*5)
+        self.screen.fill(C.LIGHTER_BLUE_COLOR, message_rect)
+
+        # Draw the ship on the screen
+        if self.ship_count < 5:
+            preview = self.ship_preview.load_ship_image()
+            if not self.ship_preview.rotated:
+                ship = pygame.transform.scale(preview,(C.TILE_WIDTH, C.TILE_HEIGHT*self.ship_preview.length))
+                self.screen.blit(ship, (C.SHIP_PREVIEW_X, C.SHIP_PREVIEW_Y))
+            else:
+                ship = pygame.transform.scale(preview, (C.TILE_WIDTH, C.TILE_HEIGHT*self.ship_preview.length))
+                ship = pygame.transform.rotate(ship, 90)
+                self.screen.blit(ship, (C.SHIP_PREVIEW_X, C.SHIP_PREVIEW_Y))
+
+
+
+
 
 
 if __name__ == "__main__":
