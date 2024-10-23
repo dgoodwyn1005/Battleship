@@ -54,6 +54,7 @@ class Main_Menu(D.Display):
     def main_loop(self):
 
         while self.running:
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False

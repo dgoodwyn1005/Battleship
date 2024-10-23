@@ -3,6 +3,7 @@ import Constants as C
 import pygame
 
 class GameDisplay(object):
+
     def __init__(self, screen):
         self.screen = screen
         self.font = pygame.font.SysFont(None, 25)
