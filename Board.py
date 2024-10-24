@@ -7,6 +7,8 @@ import Button as B
 import GameDisplay
 import Ships as S
 import OptionsScreen as OS
+from Player import CPU
+
 
 
 
@@ -16,6 +18,8 @@ class BattleScreen(D.Display):
         super().__init__()
         self.running = True
         self.placeShips = True
+        # turn flag
+        self.player_turn = True
         self.pause_button = B.Button(C.PAUSE_X, C.PAUSE_Y, C.PAUSE_WIDTH_HEIGHT, C.PAUSE_WIDTH_HEIGHT,
                                      C.PAUSE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR)
         self.rotate_button = B.Button(C.ROTATE_X, C.ROTATE_Y, C.ROTATE_WIDTH_HEIGHT, C.ROTATE_WIDTH_HEIGHT,
@@ -50,6 +54,9 @@ class BattleScreen(D.Display):
         self.startedBoard = True
         self.create_grid()
 
+        # Create CPU player
+        self.cpu_player = CPU(C.NUM_ROWS)
+
 
     # Main Game Loop
 
@@ -63,66 +70,75 @@ class BattleScreen(D.Display):
                 # Keyboard Input
                 if event.type == pygame.QUIT:
                     self.running = False
-                # Check if it is clicked
-                if self.pause_button.is_clicked():
-                    op_screen = OS.Options_Screen()
-                    D.Display.startDisplay(op_screen, op_screen.main_loop)
-                    self.screen.fill(C.LIGHTER_BLUE_COLOR)
-                    self.create_grid()
-                    print("Clicked")
-                if self.rotate_button.is_clicked():
-                    self.ship_preview.rotated = not self.ship_preview.rotated
-                    self.draw_preview_ship()
+                if self.player_turn:
+                    # Check if it is clicked
+                    if self.pause_button.is_clicked():
+                        op_screen = OS.Options_Screen()
+                        D.Display.startDisplay(op_screen, op_screen.main_loop)
+                        self.screen.fill(C.LIGHTER_BLUE_COLOR)
+                        self.create_grid()
+                        print("Clicked")
+                    if self.rotate_button.is_clicked():
+                        self.ship_preview.rotated = not self.ship_preview.rotated
+                        self.draw_preview_ship()
 
 
 
-                # Check if buttons are clicked
-                for button in self.button_list:
-                    if button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
+                    # Check if buttons are clicked
+                    for button in self.button_list:
+                        if button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
 
-                        # Place ships on the grid
-                        if self.placeShips and self.ship_count < 5:
-                                current_ship = self.ships[self.ship_count]
-                                loaded_ship = current_ship.load_ship_image()
+                            # Place ships on the grid
+                            if self.placeShips and self.ship_count < 5:
+                                    current_ship = self.ships[self.ship_count]
+                                    loaded_ship = current_ship.load_ship_image()
 
-                                # Scale the ship to the correct size based on the ship length
-                                loaded_ship = pygame.transform.scale(loaded_ship,
+                                    # Scale the ship to the correct size based on the ship length
+                                    loaded_ship = pygame.transform.scale(loaded_ship,
                                                                       (C.TILE_WIDTH, C.TILE_HEIGHT*current_ship.length))
-                                if current_ship.rotated:
-                                    loaded_ship = pygame.transform.rotate(loaded_ship, 90)
+                                    if current_ship.rotated:
+                                        loaded_ship = pygame.transform.rotate(loaded_ship, 90)
 
-                                tile_check = self.grid.check_tile(button.x//40 - 1, button.y//40 - 1)
-                                # Because the tiles are offset by 40 pixels, we divide by 40 to get the correct grid location
-                                if ((button.y//40 + current_ship.length <= 11 and not current_ship.rotated)
-                                        or (button.x//40 + current_ship.length <= 11 and current_ship.rotated)) and tile_check:
-                                    self.grid.update_grid(button.x//40 - 1, button.y//40 - 1, current_ship.length, current_ship)
+                                    tile_check = self.grid.check_tile(button.x//40 - 1, button.y//40 - 1)
+                                    # Because the tiles are offset by 40 pixels, we divide by 40 to get the correct grid location
+                                    if ((button.y//40 + current_ship.length <= 11 and not current_ship.rotated)
+                                            or (button.x//40 + current_ship.length <= 11 and current_ship.rotated)) and tile_check:
+                                        self.grid.update_grid(button.x//40 - 1, button.y//40 - 1, current_ship.length, current_ship)
 
-                                    #Update coordinate on ship
-                                    current_ship.head_coordinate = (button.x//40 - 1, button.y//40 - 1)
+                                        #Update coordinate on ship
+                                        current_ship.head_coordinate = (button.x//40 - 1, button.y//40 - 1)
 
-                                    # Draw the ship on the screen
-                                    self.screen.blit(loaded_ship, (button.x, button.y))
-                                    self.ship_count += 1
+                                        # Draw the ship on the screen
+                                        self.screen.blit(loaded_ship, (button.x, button.y))
+                                        self.ship_count += 1
 
-                                    # Update the message to display the next ship
-                                    if self.ship_count < 5:
-                                        self.message = ("Place " + self.ships[self.ship_count].name + " " +
-                                                    str(self.ships[self.ship_count].length))
+                                        # Update the message to display the next ship
+                                        if self.ship_count < 5:
+                                            self.message = ("Place " + self.ships[self.ship_count].name + " " +
+                                                        str(self.ships[self.ship_count].length))
 
-                                        # Update preview ship
-                                        self.ship_preview = self.ships[self.ship_count]
+                                            # Update preview ship
+                                            self.ship_preview = self.ships[self.ship_count]
 
-                                    # Draw the ship on the screen
-                                    self.draw_preview_ship()
-                                else:
-                                    # Display message if ship is out of bounds
-                                    self.message = "Ship out of bounds: " + str(current_ship.length) + " spaces"
-                                    print("Ship out of bounds")
-                                self.game_display.draw_message(self.message)
-                                pygame.display.flip()
+                                        # Draw the ship on the screen
+                                        self.draw_preview_ship()
+                                    else:
+                                        # Display message if ship is out of bounds
+                                        self.message = "Ship out of bounds: " + str(current_ship.length) + " spaces"
+                                        print("Ship out of bounds")
+                                    self.game_display.draw_message(self.message)
+                                    pygame.display.flip()
 
-                        elif self.ship_count == 5:
-                            self.placeShips = False
+                            elif self.ship_count == 5:
+                                self.placeShips = False
+                                # Player attack action
+                                row = button.x // 40 - 1
+                                col = button.y // 40 - 1
+                                self.player_turn_action(row, col)
+                            
+            if not self.player_turn:
+                # CPU can start making moves
+                self.cpu_turn()
             
             if self.pause_button.is_hovered():
                 self.pause_button.color = C.HOVER_COLOR
@@ -136,6 +152,30 @@ class BattleScreen(D.Display):
             self.pause_button.draw(self.screen)
 
             pygame.display.flip()
+
+
+    # Handle player turn
+    def player_turn_action(self, row, col):
+        print(f"Player attacks tile ({row}, {col})")
+        result = self.grid.attack_tile(row, col)
+        if result:
+            print("Player hit a ship!")
+        else:
+            print("Player missed.")
+        
+        self.player_turn = False  # End player turn
+        pygame.display.flip()
+    
+    # Handle CPU turn
+    def cpu_turn(self):
+        print("CPU Turn")
+        result = self.cpu_player.make_move(self.grid)
+        if result:
+            print("Cpu hit a ship")
+        else:
+            print("Cpu missed")
+        self.player_turn = True  # End CPU turn
+        pygame.display.flip()
 
 
             
