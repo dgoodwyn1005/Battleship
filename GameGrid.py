@@ -35,6 +35,7 @@ class GameGrid(object):
                     return False
         return True
 
+
     def grid_length(self):
         return self.width
 
