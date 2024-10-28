@@ -60,11 +60,11 @@ class Main_Menu(D.Display):
                 if self.start_button.is_clicked():
                     print("Start Game")  # Transition to game loop
                     battle_screen = BG.BattleScreen()
-                    D.Display.startDisplay(battle_screen, battle_screen.main_loop())
+                    battle_screen.startDisplay(battle_screen.main_loop())
                 if self.options_button.is_clicked():
                     print("Options Selected")  # Transition to options screen
                     op_screen = OS.Options_Screen()
-                    D.Display.startDisplay(op_screen, op_screen.main_loop)
+                    op_screen.startDisplay
                 if self.quit_button.is_clicked():
                     print("Quit Game")
                     self.running = False
@@ -73,4 +73,4 @@ class Main_Menu(D.Display):
 
 if __name__ == "__main__":
     screen = Main_Menu()
-    D.Display.startDisplay(screen, screen.main_loop())
+    screen.startDisplay(screen.main_loop())
