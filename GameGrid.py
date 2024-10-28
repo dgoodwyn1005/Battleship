@@ -23,9 +23,18 @@ class GameGrid(object):
         print()
 
     # Check if a tile is empty
-    def check_tile(self, index_x, index_y):
-        return self.grid[index_x][index_y] == 0
-    
+    def check_tile(self, index_x, index_y, length, rotated):
+        if not rotated:
+            for n in range(length):
+                print(self.grid[index_x][index_y + n])
+                if self.grid[index_x][index_y + n] != 0:
+                    return False
+        else:
+            for n in range(length):
+                if self.grid[index_x + n][index_y] != 0:
+                    return False
+        return True
+
 
     def grid_length(self):
         return self.width
