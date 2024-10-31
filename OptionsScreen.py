@@ -80,4 +80,3 @@ class Options_Screen(D.Display):
 
 if __name__ == "__main__":
     screen = Options_Screen()
-    screen.main_loop
