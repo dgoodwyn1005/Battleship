@@ -160,7 +160,6 @@ class BattleScreen(D.Display):
                                             self.draw_preview_ship()
                                         else:
                                             self.message = "Overlaps with another ship"
-
                                     else:
                                         # Display message if ship is out of bounds
                                         self.message = "Ship out of bounds: " + str(current_ship.length) + " spaces"
@@ -200,6 +199,34 @@ class BattleScreen(D.Display):
             self.rotate_button.draw(self.screen)
 
             pygame.display.flip()
+            self.pause_button.draw(self.screen)
+
+            pygame.display.flip()
+
+
+    # Handle player turn
+    def player_turn_action(self, row, col):
+        print(f"Player attacks tile ({row}, {col})")
+        result = self.grid.attack_tile(row, col)
+        if result:
+            print("Player hit a ship!")
+        else:
+            print("Player missed.")
+        
+        self.player_turn = False  # End player turn
+        pygame.display.flip()
+    
+    # Handle CPU turn
+    def cpu_turn(self):
+        print("CPU Turn")
+        result = self.cpu_player.make_move(self.grid)
+        if result:
+            print("Cpu hit a ship")
+        else:
+            print("Cpu missed")
+        self.player_turn = True  # End CPU turn
+        pygame.display.flip()
+
 
 
     # Handle player turn

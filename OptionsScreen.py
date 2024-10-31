@@ -45,7 +45,7 @@ class Options_Screen(D.Display):
 
         self.game_display.draw_settings("On" if Options_Screen.play_music else "Off",
                                         "On" if Options_Screen.play_sound_effects else "Off")
-        pygame.display.flip()
+
 
 
     def toggle_music(self):
