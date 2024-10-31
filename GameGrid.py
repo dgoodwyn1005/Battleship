@@ -8,11 +8,13 @@ class GameGrid(object):
         self.height = columns
         self.grid = np.zeros(shape=(columns, rows))
 
+
     def __str__(self):
         return f"{self.grid}"
 
     # Update grid when a ship is placed
     def update_grid(self, index_x, index_y, value, ship):
+        """Updates the values of the grid to the ship's length when a ship is placed to match its position"""
         if not ship.rotated:
             for n in range(value):
                 self.grid[index_x][index_y + n] = value
@@ -24,6 +26,7 @@ class GameGrid(object):
 
     # Check if a tile is empty
     def check_tile(self, index_x, index_y, length, rotated):
+        """Checks if the tile is empty"""
         if not rotated:
             for n in range(length):
                 print(self.grid[index_x][index_y + n])
@@ -43,15 +46,21 @@ class GameGrid(object):
         return self.height
     
     def attack_tile(self, index_x, index_y):
-        # Check if tile was already attacked
-        # -1 means already attacked, wether it's a hit or a miss
-        if self.grid[index_x][index_y] == -1:  
-            return False  # Tile already attacked
-        
-        # Check if a ship is on the tile
-        if self.grid[index_x][index_y] != 0:
-            self.grid[index_x][index_y] = -1  # Mark as attacked
-            return True  # Hit
+        """Attacks a tile and returns the value of the tile"""
+        #  0: "None", 1: "destroyer", 2: "submarine", 3: "cruiser", 4: "battleship",
+        #           5: "aircraft_carrier", 6: "hit", 7: "miss"
+        #  Check if tile was already attacked
+
+        value = self.grid[index_x][index_y]
+        if value != 6 and value != 7:       # If the tile has not been attacked
+            if value == 0:                  # If the tile is empty
+                value = -1
+                self.grid[index_x][index_y] = 7  # Mark as miss
+                return value
+            else:
+                self.grid[index_x][index_y] = 6  # Mark as hit
+                return value
         else:
-            self.grid[index_x][index_y] = -1  # Mark as miss
-            return False  # Miss
+            # If the tile has been attacked already
+            value = -1
+            return value
