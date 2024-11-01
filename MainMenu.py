@@ -19,7 +19,7 @@ class Main_Menu(D.Display):
         # self.text = C.MENU_TEXT
         self.game_display = GD.GameDisplay(self.screen)
         self.draw_buttons_and_text()
-        self.main_loop()
+        # self.main_loop()
 
     def draw_buttons_and_text(self):
         # self.screen.fill(C.BLUE)
@@ -62,10 +62,12 @@ class Main_Menu(D.Display):
                     print("Start Game")  # Transition to game loop
                     self.running = False
                     battle_screen = BG.BattleScreen()
-                    battle_screen.startDisplay
+                    battle_screen.startDisplay(battle_screen.main_loop())
                 if self.options_button.is_clicked():
                     print("Options Selected")  # Transition to options screen
-                    OS.Options_Screen()
+                    screen = OS.Options_Screen()
+                    screen.startDisplay(screen.main_loop)
+
                 if self.quit_button.is_clicked():
                     print("Quit Game")
                     self.running = False
@@ -74,4 +76,4 @@ class Main_Menu(D.Display):
 
 if __name__ == "__main__":
     screen = Main_Menu()
-    screen.startDisplay
+    screen.startDisplay(screen.main_loop)

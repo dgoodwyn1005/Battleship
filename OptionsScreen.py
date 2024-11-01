@@ -18,8 +18,8 @@ class Options_Screen(D.Display):
         self.back_button = B.Button(C.BACK_X, C.BACK_Y, C.BACK_WIDTH_HEIGHT, C.BACK_WIDTH_HEIGHT, C.BACK_TEXT,
                                     C.font, C.GREY, C.WHITE_FONT_COLOR)
         self.game_display = GD.GameDisplay(self.screen)
-        self.draw_buttons_and_settings()
-        self.main_loop()
+
+
 
     def draw_buttons_and_settings(self):
         # Draw buttons
@@ -65,11 +65,12 @@ class Options_Screen(D.Display):
 
 
     def main_loop(self):
+        self.draw_buttons_and_settings() # Draw the buttons and settings
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                # Mousebutton ensure only one click is registered
+                # Mousebutton ensures only one click is registered
                 if self.music_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
                     self.toggle_music()
                 elif self.sounds_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
@@ -80,3 +81,4 @@ class Options_Screen(D.Display):
 
 if __name__ == "__main__":
     screen = Options_Screen()
+    screen.startDisplay(screen.main_loop)
