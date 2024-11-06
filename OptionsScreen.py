@@ -18,6 +18,8 @@ class Options_Screen(D.Display):
         self.back_button = B.Button(C.BACK_X, C.BACK_Y, C.BACK_WIDTH_HEIGHT, C.BACK_WIDTH_HEIGHT, C.BACK_TEXT,
                                     C.font, C.GREY, C.WHITE_FONT_COLOR)
         self.game_display = GD.GameDisplay(self.screen)
+        self.explosion_sound = pygame.mixer.Sound(C.AUDIO_FOLDER + "/explosion_sound.wav")
+        self.water_sound = pygame.mixer.Sound(C.AUDIO_FOLDER + "/water_splash_sound.wav")
 
 
 
@@ -62,6 +64,14 @@ class Options_Screen(D.Display):
     def go_back(self):
         """When the back button is clicked, go back to the main menu"""
         self.running = False
+
+    def play_explosion_sound(self):
+        if Options_Screen.play_sound_effects:
+            self.explosion_sound.play()
+
+    def play_water_sound(self):
+        if Options_Screen.play_sound_effects:
+            self.water_sound.play()
 
 
     def main_loop(self):

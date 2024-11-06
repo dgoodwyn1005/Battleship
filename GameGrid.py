@@ -21,8 +21,7 @@ class GameGrid(object):
         else:
             for n in range(value):
                 self.grid[index_x + n][index_y] = value
-        print(self.grid)
-        print()
+
 
     # Check if a tile is empty
     def check_tile(self, index_x, index_y, length, rotated):
@@ -60,7 +59,3 @@ class GameGrid(object):
             else:
                 self.grid[index_x][index_y] = 6  # Mark as hit
                 return value
-        else:
-            # If the tile has been attacked already
-            value = -1
-            return value
