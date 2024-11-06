@@ -9,6 +9,9 @@ IMAGE_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 # FONTS Folder
 FONTS_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/fonts"
 
+# AUDIO Folder
+AUDIO_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/audio"
+
 # GRID
 TILE_WIDTH = 40
 TILE_HEIGHT = 40

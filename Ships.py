@@ -17,3 +17,7 @@ class Ships(object):
         return pygame.image.load(self.file_location)
 
 
+    def check_sunken(self):
+        """Checks if the ship is sunk"""
+        return self.hit_count == self.length
+

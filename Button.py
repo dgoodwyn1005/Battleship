@@ -11,7 +11,8 @@ class Button(object):
         self.text = text  
         self.font = font  
         self.color = color  
-        self.text_color = text_color  
+        self.text_color = text_color
+        self.disabled = False
 
     def draw(self, screen: pygame.Surface):
         # Draw the button rectangle
