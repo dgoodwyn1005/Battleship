@@ -17,6 +17,11 @@ class GameDisplay(object):
     
     # Draw the turn indicator in the center
     def draw_turn_indicator(self, current_player):
+
+        # Define the rectangle area to clear the previous turn message
+        turn_rect = pygame.Rect(self.screen.get_width() // 2 - 100, self.screen.get_height() - 35, 200, 30)
+        self.screen.fill(C.LIGHTER_BLUE_COLOR, turn_rect)  # Clear with background color
+
         turn_text = self.font.render(f"Turn: {current_player}", True, C.WHITE_FONT_COLOR)
         text_rect = turn_text.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() - 25))
         self.screen.blit(turn_text, text_rect)
