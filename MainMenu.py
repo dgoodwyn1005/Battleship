@@ -5,7 +5,7 @@ import Constants as C
 import Button as B
 import GameDisplay as GD
 import OptionsScreen as OS
-#from TextInput import TextInput
+from textbox import TextBox
 
 
 class Main_Menu(D.Display):
@@ -17,10 +17,15 @@ class Main_Menu(D.Display):
                                        C.font, C.GREY, C.WHITE_FONT_COLOR)
         self.quit_button = B.Button(C.QUIT_X, C.QUIT_Y, C.QUIT_WIDTH, C.QUIT_HEIGHT, C.QUIT_TEXT,
                                     C.font, C.GREY, C.WHITE_FONT_COLOR)
-        # self.text = C.MENU_TEXT
+        
+        # Initialize text box
+        self.font = pygame.font.Font(None, 32)
+        self.textbox = TextBox(C.TEXTBOX_X, C.TEXTBOX_Y , C.TEXTBOX_WIDTH, C.TEXTBOX_HEIGHT, C.font)
+        self.username = "Player 1"
+
         self.game_display = GD.GameDisplay(self.screen)
         self.draw_buttons_and_text()
-        # self.main_loop()
+
 
     def draw_buttons_and_text(self):
         # self.screen.fill(C.BLUE)
@@ -40,15 +45,25 @@ class Main_Menu(D.Display):
             self.quit_button.color = C.HOVER_COLOR
         else:
             self.quit_button.color = C.GREY
+
+        # Draw buttons
         self.start_button.draw(self.screen)
         self.options_button.draw(self.screen)
         self.quit_button.draw(self.screen)
 
-        # Rendering text
+        # Rendering main menu title text
         menu_font = pygame.font.SysFont(None, 25)
         rendered_text = menu_font.render(C.MENU_TEXT, True, C.WHITE_FONT_COLOR)
         text_rect = rendered_text.get_rect(center=(C.TEXT_X, C.TEXT_Y))
         self.screen.blit(rendered_text, text_rect)
+
+        # Draw "Enter Username" label above the text box
+        username_label = self.font.render(C.TEXTBOX_TEXT, True, C.WHITE_FONT_COLOR)
+        label_rect = username_label.get_rect(center=(C.TEXTBOX_X + C.TEXTBOX_WIDTH // 2, C.TEXTBOX_Y - 20))
+        self.screen.blit(username_label, label_rect)
+
+        # Draw text box
+        self.textbox.draw(self.screen)
 
         pygame.display.flip()
 
@@ -60,11 +75,22 @@ class Main_Menu(D.Display):
                 if event.type == pygame.QUIT:
                     self.running = False
 
+                # Handle text box events
+                self.textbox.handle_event(event)
+
+                # Update the username if Enter is pressed
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    self.username = self.textbox.text
+
+                # Handle button clicks
                 if self.start_button.is_clicked():
+
                     print("Start Game")  # Transition to game loop
+                    self.username = self.textbox.text if self.textbox.text else self.username
+                    battle_screen = BG.BattleScreen(username=self.username)
                     self.running = False
-                    battle_screen = BG.BattleScreen()
                     battle_screen.startDisplay(battle_screen.main_loop())
+
                 if self.options_button.is_clicked():
                     print("Options Selected")  # Transition to options screen
                     screen = OS.Options_Screen()
@@ -72,10 +98,13 @@ class Main_Menu(D.Display):
 
                 if self.quit_button.is_clicked():
 
-                  print("Quit Game")
+                    print("Quit Game")
                     self.running = False
-                self.screen.fill(C.BLUE)
-                self.draw_buttons_and_text()
+
+               
+
+            self.screen.fill(C.BLUE)
+            self.draw_buttons_and_text()
 
 
 if __name__ == "__main__":

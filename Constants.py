@@ -76,6 +76,13 @@ MENU_FONT = pygame.font.Font(None, MENU_FONT_SIZE)
 TEXT_X = 700
 TEXT_Y = 100
 
+# Text box
+TEXTBOX_X = 600
+TEXTBOX_Y = 180
+TEXTBOX_WIDTH = 200
+TEXTBOX_HEIGHT = 50
+TEXTBOX_TEXT = "Enter Username: "
+
 # Start button
 START_X = 600
 START_Y = 300
