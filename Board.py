@@ -9,9 +9,8 @@ import Button as B
 import GameDisplay
 import Ships as S
 import OptionsScreen as OS
+import SoundManager as SM
 from Player import CPU
-
-
 
 
 class BattleScreen(D.Display):
@@ -28,6 +27,9 @@ class BattleScreen(D.Display):
         self.turn_message = "Player1"
 
         # Load Game Assets
+
+        # Load Sound Manager
+        self.sounds = SM.Sound(100, 100)
 
         # Load Grid and Water Tiles
         grid_tile = pygame.image.load(C.IMAGE_FOLDER + "/grid.png")
@@ -88,6 +90,8 @@ class BattleScreen(D.Display):
         self.cpu_place_ships()         # Place CPU ships
         self.create_grid() # Draw the grid on the screen
         self.draw_preview_ship() # Draw the ship on the screen
+
+        self.sounds.play_song("conflict")
         while self.running:
 
             for event in pygame.event.get():
@@ -104,6 +108,7 @@ class BattleScreen(D.Display):
                     self.create_grid()
                     self.redraw_ships()
                     self.draw_preview_ship()
+                    self.sounds.stop_song("conflict")
                 if self.rotate_button.is_clicked():
                     self.ship_preview.rotated = not self.ship_preview.rotated
                     self.draw_preview_ship()
@@ -249,12 +254,14 @@ class BattleScreen(D.Display):
             print(self.opponent_ships[5 - result].name + " is sunken: " + str(checkSunken))
             if checkSunken:
                 self.show_sunken_ship(self.opponent_ships[5-result])
+            self.sounds.play_sound("explosion")
 
         else:
             self.message = "Player missed."
             self.screen.blit(self.water_ripple, (row * C.TILE_WIDTH + C.OPPONENT_X_OFFSET, col * C.TILE_HEIGHT
                                                  + C.OPPONENT_Y_OFFSET))  # Draw water ripple
             # Put the play water sound method in this line
+            self.sounds.play_sound("splash")
         self.game_display.draw_message(self.message)
 
         self.player_turn = False  # End player turn
