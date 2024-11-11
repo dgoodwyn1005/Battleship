@@ -1,5 +1,4 @@
 import random
-
 import pygame
 import pygame.image
 import Constants as C
@@ -9,25 +8,26 @@ import Button as B
 import GameDisplay
 import Ships as S
 import OptionsScreen as OS
+import SoundManager as SM
 from Player import CPU
-
-
 
 
 class BattleScreen(D.Display):
 
-    def __init__(self):
+    def __init__(self, username="Player1"):
         super().__init__()
+        self.username = username
         self.placeShips = True
-        # turn flag
-        self.player_turn = True
+        self.player_turn = True  # turn flag that swtiches between player and CPU
+        self.turn_message = self.username
         self.pause_button = B.Button(C.PAUSE_X, C.PAUSE_Y, C.PAUSE_WIDTH_HEIGHT, C.PAUSE_WIDTH_HEIGHT,
                                      C.PAUSE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR)
         self.rotate_button = B.Button(C.ROTATE_X, C.ROTATE_Y, C.ROTATE_WIDTH_HEIGHT, C.ROTATE_WIDTH_HEIGHT,
                                       C.ROTATE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR)
-        self.turn_message = "Player1"
 
         # Load Game Assets
+
+        # self.sounds = SM.Sound()        # This is the reason for the black screen. The sound is not being loaded properly
 
         # Load Grid and Water Tiles
         grid_tile = pygame.image.load(C.IMAGE_FOLDER + "/grid.png")
@@ -43,7 +43,8 @@ class BattleScreen(D.Display):
         self.water_ripple = pygame.image.load(C.IMAGE_FOLDER + "/ripple.jpg")
         self.explosion = pygame.transform.scale(self.explosion, (C.TILE_WIDTH, C.TILE_HEIGHT))
         self.water_ripple = pygame.transform.scale(self.water_ripple, (C.TILE_WIDTH, C.TILE_HEIGHT))
-
+        self.opponent_attacks = set()
+        self.my_attacks = set()
 
         # Create Grid object
         self.grid = GG.GameGrid(C.NUM_ROWS, C.NUM_COL)
@@ -65,7 +66,6 @@ class BattleScreen(D.Display):
         self.ship_preview = self.ships[self.ship_count]
         self.startedBoard = True
 
-
         # Load Opponent Ships
         self.opponent_carrier_ship = S.Ships("aircraft_carrier", 5)
         self.opponent_battle_ship = S.Ships("battleship", 4)
@@ -78,16 +78,13 @@ class BattleScreen(D.Display):
         # Create CPU player
         self.cpu_player = CPU(C.NUM_ROWS)
 
-        # The self.options messes up the display of the board screen. We need help to fix this
-        # self.options = OS.Options_Screen()
-
-
-
     # Main Game Loop
     def main_loop(self):
+        pygame.display.flip()
         self.cpu_place_ships()         # Place CPU ships
         self.create_grid() # Draw the grid on the screen
         self.draw_preview_ship() # Draw the ship on the screen
+        # self.sounds.play_song("conflict")
         while self.running:
 
             for event in pygame.event.get():
@@ -100,15 +97,17 @@ class BattleScreen(D.Display):
                 if self.pause_button.is_clicked():
                     op_screen = OS.Options_Screen()
                     op_screen.startDisplay(op_screen.main_loop)
-                    self.screen.fill(C.LIGHTER_BLUE_COLOR)
-                    self.create_grid()
-                    self.redraw_ships()
-                    self.draw_preview_ship()
-                if self.rotate_button.is_clicked():
+                    self.screen.fill(C.LIGHTER_BLUE_COLOR)      # Fill screen with light blue color
+                    self.create_grid()                          # Draw the grids again
+                    self.redraw_ships()                         # Redraw the ships
+                    self.draw_preview_ship()               # Draw the preview ship if the player is still placing ships
+                    self.redraw_attacks(self.my_attacks)    # Redraw the attacks on the opponent grid
+                    self.redraw_attacks(self.opponent_attacks)  # Redraw the attacks on the player grid
+                    self.redraw_sunken_ships()              # Redraw the sunken ships
+                    # self.sounds.stop_song("conflict")
+                if self.rotate_button.is_clicked():     # Rotate the ship if the rotate button is clicked
                     self.ship_preview.rotated = not self.ship_preview.rotated
                     self.draw_preview_ship()
-
-
 
                 # Check if buttons are clicked
                 for button in self.button_list:
@@ -155,6 +154,8 @@ class BattleScreen(D.Display):
 
                                         else: # If all ships have been placed this allows the attacking to begin
                                             self.placeShips = False
+                                            self.message = "Ships placed. Begin attacking!"
+                                            self.rotate_button.disabled = True  # Disable the rotate button
 
                                         # Draw the ship on the screen
                                         self.draw_preview_ship()
@@ -167,8 +168,11 @@ class BattleScreen(D.Display):
                                 self.game_display.draw_message(self.message)
                                 pygame.display.flip()
 
-                    # Player can start making moves
-
+                    # Update turn message
+                    if self.player_turn:
+                        self.turn_message = self.username
+                    else:
+                        self.turn_message = "CPU"
 
 
                     if self.player_turn and not self.placeShips:
@@ -179,7 +183,7 @@ class BattleScreen(D.Display):
                                 self.player_turn_action(row, col)
                                 opponent_button.disabled = True     # Disable the button after it has been clicked
 
-                if not self.player_turn and not self.placeShips:
+                if not self.player_turn and not self.placeShips:    # CPU turn begins after all ships have been placed and player has attacked
                     # CPU can start making moves
                     self.cpu_turn()
 
@@ -191,8 +195,11 @@ class BattleScreen(D.Display):
                 self.pause_button.color = C.GREY
 
             # Check if the rotate button is hovered and change color accordingly
-            if self.rotate_button.is_hovered():
+            if self.rotate_button.is_hovered() and not self.rotate_button.disabled:
                 self.rotate_button.color = C.HOVER_COLOR
+            elif self.rotate_button.disabled:
+                self.rotate_button.color = C.LIGHTER_BLUE_COLOR
+                self.rotate_button.text_color = C.LIGHTER_BLUE_COLOR
             else:
                 self.rotate_button.color = C.GREY
 
@@ -202,62 +209,64 @@ class BattleScreen(D.Display):
             self.game_display.draw_turn_indicator(self.turn_message)
 
             pygame.display.flip()
+            self.pause_button.draw(self.screen)
+
+            pygame.display.flip()
 
 
     # Handle player turn
     def player_turn_action(self, row, col):
         print(f"Player attacks tile ({row}, {col})")
-        result = int(self.opponent_grid.attack_tile(row, col))
-        print("This is the result", result)
+        result = int(self.opponent_grid.attack_tile(row, col))      # Attack the tile and returns the result
+        row = row * C.TILE_WIDTH + C.OPPONENT_X_OFFSET      # Convert row and col to x and y coordinates
+        col = col * C.TILE_HEIGHT + C.OPPONENT_Y_OFFSET
         if result != -1:
-            self.message = "Player hit a ship!"
+            self.message = "Player hit a ship!"     # Update message if player hits a ship
             self.opponent_ships[5 - result].hit_count += 1  # Increase hit count of ship
-            print()
-            print("Ship number is " + str(5 - result))
-            self.screen.blit(self.explosion, (row * C.TILE_WIDTH + C.OPPONENT_X_OFFSET, col * C.TILE_HEIGHT
-                                              + C.OPPONENT_Y_OFFSET))   # Draw explosion
+            self.my_attacks.add((row, col, "hit"))      # Add x and y coordinates and hit to my_attacks
+            self.screen.blit(self.explosion, (row, col))   # Draw explosion
             # Put play explosion method in this line
             checkSunken = self.opponent_ships[5-result].check_sunken()  # Check if ship is sunken
-            print(self.opponent_ships[5 - result].name + " is sunken: " + str(checkSunken))
             if checkSunken:
                 self.show_sunken_ship(self.opponent_ships[5-result])
-
+            # self.sounds.play_sound("explosion")               Need to fix sound module
         else:
             self.message = "Player missed."
-            self.screen.blit(self.water_ripple, (row * C.TILE_WIDTH + C.OPPONENT_X_OFFSET, col * C.TILE_HEIGHT
-                                                 + C.OPPONENT_Y_OFFSET))  # Draw water ripple
-            # Put the play water sound method in this line
-        self.game_display.draw_message(self.message)
-
+            self.my_attacks.add((row, col, "miss"))  # Add x and y coordinates and miss to my_attacks
+            self.screen.blit(self.water_ripple, (row, col))  # Draw water ripple
+            # self.sounds.play_sound("splash")
+        self.game_display.draw_message(self.message)        # Draws the result message on the screen
         self.player_turn = False  # End player turn
         self.turn_message = "CPU"
 
 
     # Handle CPU turn
     def cpu_turn(self):
-        # print("CPU Turn")
+        """CPU makes a move and it displays on the 1st player's grid"""
         result = self.cpu_player.make_move(self.grid)
+        row = result[1][0] * C.TILE_WIDTH + C.X_OFFSET
+        col = result[1][1] * C.TILE_HEIGHT + C.Y_OFFSET
         if result[0] != -1:
             # print("Cpu hit a ship")
             self.ships[int(result[0]) - 1].hit_count += 1
-            self.screen.blit(self.explosion, (result[1][0] * C.TILE_WIDTH + C.X_OFFSET, result[1][1] * C.TILE_HEIGHT + C.Y_OFFSET))
+            self.opponent_attacks.add((row, col, "hit"))
+            self.screen.blit(self.explosion, (row, col))
+            # self.sounds.play_sound("explosion")
         else:
             # print("Cpu missed")
-            self.screen.blit(self.water_ripple, (result[1][0] * C.TILE_WIDTH + C.X_OFFSET, result[1][1] * C.TILE_HEIGHT + C.Y_OFFSET))
+            self.opponent_attacks.add((row, col, "miss"))
+            self.screen.blit(self.water_ripple, (row, col))
+            # self.sounds.play_sound("splash")
         self.player_turn = True  # End CPU turn
         self.turn_message = "Player1"
         pygame.display.flip()
 
-            
-
     def create_grid(self):
-
+        """Draws both grids onto the screen, creates buttons for each tile, and them to a list"""
         # Player and opponent names, and turn message
-        player_name = "Player1"
-        opponent_name = "Player2"
-
-
-
+        player_name = self.username
+        opponent_name = "CPU"
+        self.game_display.draw_names(player_name, opponent_name)
         #Draw grid and create buttons at respective locations
         for x in range(self.grid.grid_length()):
             for y in range(self.grid.grid_height()):
@@ -281,7 +290,7 @@ class BattleScreen(D.Display):
                 gridButton = B.Button(x * C.TILE_WIDTH + C.OPPONENT_X_OFFSET, y * C.TILE_HEIGHT + C.OPPONENT_Y_OFFSET, C.TILE_WIDTH,
                                       C.TILE_HEIGHT, chr(y + 97) + str(x + 1), C.font, C.BLACK_BACKGROUND_COLOR,
                                       C.LIGHT_GREY)
-                if self.startedBoard:
+                if self.startedBoard:   # Add buttons to list only when the board is first created to avoid duplicates
                     self.opponent_button_list.append(gridButton)
 
         # Draw the grid coordinates
@@ -325,17 +334,18 @@ class BattleScreen(D.Display):
         pygame.display.flip()
 
     def draw_preview_ship(self):
-        # Clear previous ship preview by drawing a rectangle
+        """Draw the preview ship on the screen so that the player knows which ship is being placed"""
+        # Clear previous ship preview by drawing a rectangle over it
         message_rect = pygame.Rect(C.SHIP_PREVIEW_X, C.SHIP_PREVIEW_Y, C.TILE_WIDTH+200, C.TILE_HEIGHT*5)
         self.screen.fill(C.LIGHTER_BLUE_COLOR, message_rect)
 
         # Draw the ship on the screen
-        if self.ship_count < 5:
+        if self.ship_count < 5:     # If all ships have not been placed, draw the preview image of the next ship
             preview = self.ship_preview.load_ship_image()
-            if not self.ship_preview.rotated:
+            if not self.ship_preview.rotated:     # If the ship is not rotated, draw the ship normally
                 ship = pygame.transform.scale(preview,(C.TILE_WIDTH, C.TILE_HEIGHT*self.ship_preview.length))
                 self.screen.blit(ship, (C.SHIP_PREVIEW_X, C.SHIP_PREVIEW_Y))
-            else:
+            else:       # Otherwise, rotate the ship image and draw it
                 ship = pygame.transform.scale(preview, (C.TILE_WIDTH, C.TILE_HEIGHT*self.ship_preview.length))
                 ship = pygame.transform.rotate(ship, 90)
                 self.screen.blit(ship, (C.SHIP_PREVIEW_X, C.SHIP_PREVIEW_Y))
@@ -358,10 +368,8 @@ class BattleScreen(D.Display):
     def cpu_place_ships(self):
         """Place the CPU ships on the opponent grid"""
         for ship in self.opponent_ships:
-
             rotated = random.choice([True, False])      # Randomly choose if the ship should be rotated
             ship.rotated = rotated
-
             rowCheck = False
             while not rowCheck:     # Check if the ship can be placed in the row
                 row = random.randint(0, 9)
@@ -369,14 +377,11 @@ class BattleScreen(D.Display):
                     rowCheck = True
                 elif ship.rotated and row + ship.length <= 10:
                     rowCheck = True
-
             colCheck = False
             while not colCheck:     # Check if the ship can be placed in the column
                 col = random.randint(0, 9)
                 if col + ship.length <= 10:
                     colCheck = True
-
-
             canPlace = self.opponent_grid.check_tile(row, col, ship.length, ship.rotated)  #Check if the ship can be placed
             if canPlace:
                 self.opponent_grid.update_grid(row, col, ship.length, ship)     # Update the grid with the ship
@@ -387,17 +392,33 @@ class BattleScreen(D.Display):
     def show_sunken_ship(self, ship):
         """Show the sunken ship on the screen"""
         sunken_ship = ship.load_ship_image()
-        sunken_ship = pygame.transform.scale(sunken_ship,
+        sunken_ship = pygame.transform.scale(sunken_ship,  # Scale the sunken ship to the correct size based on ship
                                              (C.TILE_WIDTH, C.TILE_HEIGHT * ship.length))
         if ship.rotated:                # Rotate the ship if it is supposed to be rotated
             sunken_ship = pygame.transform.rotate(sunken_ship, 90)
         sunken_ship.set_alpha(100)      # Set the transparency of the sunken ship
-        self.screen.blit(sunken_ship, ship.head_coordinate)
+        self.screen.blit(sunken_ship, ship.head_coordinate)  # Draw the sunken ship on the screen
+        ship.sunken = True              # Set the ship as sunken
         pygame.display.flip()
+
+    def redraw_attacks(self, coord_set):
+        """Redraw the attacks on the screen after returning from the pause screen"""
+        for coord in coord_set:
+            if coord[2] == "hit":    # Draw explosion if the attack was a hit
+                self.screen.blit(self.explosion, (coord[0], coord[1]))
+            else:                   # Otherwise, draw the water ripple if the attack was a miss
+                self.screen.blit(self.water_ripple, (coord[0], coord[1]))
+        pygame.display.flip()
+
+    def redraw_sunken_ships(self):
+        """Redraw the sunken ships on the screen after returning from the pause menu screen"""
+        for ship in self.opponent_ships:
+            if ship.sunken:
+                self.show_sunken_ship(ship)
+        pygame.display.flip()
+
 
 
 if __name__ == "__main__":
     battle = BattleScreen()
-    battle.startDisplay(battle.main_loop())
-
-
+    battle.startDisplay(battle.main_loop)

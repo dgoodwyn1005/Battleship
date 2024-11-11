@@ -21,6 +21,7 @@ class Display(object):
             gameLoop()
             pygame.display.flip()
 
+
     def changeDimensions(self, width, height):
         self.screen = pygame.display.set_mode((width, height))
 

@@ -27,7 +27,7 @@ OPPONENT_Y_OFFSET = 80
 # TEXT
 WHITE_FONT_COLOR = (255, 255, 255)
 FONT_SIZE = 20
-font = pygame.font.Font(None, FONT_SIZE)    #Font for text rendering
+font = pygame.font.Font(None, FONT_SIZE)    # Font for text rendering
 
 # PAUSE BUTTON
 PAUSE_X = 760
@@ -55,7 +55,6 @@ BLACK_BACKGROUND_COLOR = (0, 0, 0)
 LIGHTER_BLUE_COLOR = (100, 170, 210)
 RED = (255, 0, 0)
 GREY = (128, 128, 128)
-HOVER_COLOR = (150, 150, 150)
 BLUE = (24, 123, 205)
 LIGHT_GREY = (101, 100, 100)
 DARK_GREEN = (105, 135, 165)
@@ -75,6 +74,13 @@ MENU_FONT_SIZE = 200
 MENU_FONT = pygame.font.Font(None, MENU_FONT_SIZE)
 TEXT_X = 700
 TEXT_Y = 100
+
+# Text box
+TEXTBOX_X = 600
+TEXTBOX_Y = 180
+TEXTBOX_WIDTH = 200
+TEXTBOX_HEIGHT = 50
+TEXTBOX_TEXT = "Enter Username: "
 
 # Start button
 START_X = 600
