@@ -28,7 +28,6 @@ class GameGrid(object):
         """Checks if the tile is empty"""
         if not rotated:
             for n in range(length):
-                print(self.grid[index_x][index_y + n])
                 if self.grid[index_x][index_y + n] != 0:
                     return False
         else:
@@ -48,7 +47,6 @@ class GameGrid(object):
         """Attacks a tile and returns the value of the tile"""
         #  0: "None", 1: "destroyer", 2: "submarine", 3: "cruiser", 4: "battleship",
         #           5: "aircraft_carrier", 6: "hit", 7: "miss"
-        #  Check if tile was already attacked
 
         value = self.grid[index_x][index_y]
         if value != 6 and value != 7:       # If the tile has not been attacked

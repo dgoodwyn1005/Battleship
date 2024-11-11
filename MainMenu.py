@@ -89,7 +89,8 @@ class Main_Menu(D.Display):
                     self.username = self.textbox.text if self.textbox.text else self.username
                     battle_screen = BG.BattleScreen(username=self.username)
                     self.running = False
-                    battle_screen.startDisplay(battle_screen.main_loop())
+                    battle_screen.startDisplay(battle_screen.main_loop)
+
 
                 if self.options_button.is_clicked():
                     print("Options Selected")  # Transition to options screen

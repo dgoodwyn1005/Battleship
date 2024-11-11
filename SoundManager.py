@@ -39,5 +39,3 @@ class Sound:
 
     def toggle_sounds(self, choice):
         self.play_sound_effects = choice
-
-    

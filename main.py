@@ -1,3 +1,5 @@
+import pygame.display
+
 import MainMenu as MM
 
 if __name__ == "__main__":

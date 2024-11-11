@@ -27,7 +27,7 @@ OPPONENT_Y_OFFSET = 80
 # TEXT
 WHITE_FONT_COLOR = (255, 255, 255)
 FONT_SIZE = 20
-font = pygame.font.Font(None, FONT_SIZE)    #Font for text rendering
+font = pygame.font.Font(None, FONT_SIZE)    # Font for text rendering
 
 # PAUSE BUTTON
 PAUSE_X = 760
@@ -55,7 +55,6 @@ BLACK_BACKGROUND_COLOR = (0, 0, 0)
 LIGHTER_BLUE_COLOR = (100, 170, 210)
 RED = (255, 0, 0)
 GREY = (128, 128, 128)
-HOVER_COLOR = (150, 150, 150)
 BLUE = (24, 123, 205)
 LIGHT_GREY = (101, 100, 100)
 DARK_GREEN = (105, 135, 165)
