@@ -3,11 +3,9 @@ import Display as D
 import Constants as C
 import Button as B
 import GameDisplay as GD
+import SoundManager as SM
 
 class Options_Screen(D.Display):
-
-    play_music = True
-    play_sound_effects = True
 
     def __init__(self):
         super().__init__(screenName= C.OPTIONS_CAPTION, background= C.BLUE)
@@ -18,10 +16,8 @@ class Options_Screen(D.Display):
         self.back_button = B.Button(C.BACK_X, C.BACK_Y, C.BACK_WIDTH_HEIGHT, C.BACK_WIDTH_HEIGHT, C.BACK_TEXT,
                                     C.font, C.GREY, C.WHITE_FONT_COLOR)
         self.game_display = GD.GameDisplay(self.screen)
-        self.explosion_sound = pygame.mixer.Sound(C.AUDIO_FOLDER + "/explosion_sound.wav")
-        self.water_sound = pygame.mixer.Sound(C.AUDIO_FOLDER + "/water_splash_sound.wav")
 
-
+        self.sounds = SM.Sound(100, 100)
 
     def draw_buttons_and_settings(self):
         # Draw buttons
@@ -45,34 +41,24 @@ class Options_Screen(D.Display):
         self.sounds_button.draw(self.screen)
         self.back_button.draw(self.screen)
 
-        self.game_display.draw_settings("On" if Options_Screen.play_music else "Off",
-                                        "On" if Options_Screen.play_sound_effects else "Off")
-        pygame.display.flip()
+        self.game_display.draw_settings("On" if self.sounds.play_music else "Off",
+                                        "On" if self.sounds.play_sound_effects else "Off")
+
 
 
     def toggle_music(self):
         """Toggle the music on and off"""
-        Options_Screen.play_music = not Options_Screen.play_music
+        self.sounds.toggle_music(not self.sounds.play_music)
         self.draw_buttons_and_settings()
-
 
     def toggle_sound_effects(self):
         """Toggle the sound effects on and off"""
-        Options_Screen.play_sound_effects = not Options_Screen.play_sound_effects
+        self.sounds.toggle_sounds(not self.sounds.play_sound_effects)
         self.draw_buttons_and_settings()
 
     def go_back(self):
         """When the back button is clicked, go back to the main menu"""
         self.running = False
-
-    def play_explosion_sound(self):
-        if Options_Screen.play_sound_effects:
-            self.explosion_sound.play()
-
-    def play_water_sound(self):
-        if Options_Screen.play_sound_effects:
-            self.water_sound.play()
-
 
     def main_loop(self):
         self.draw_buttons_and_settings() # Draw the buttons and settings

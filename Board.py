@@ -1,6 +1,8 @@
 import random
 import pygame
 import pygame.image
+import time
+
 import Constants as C
 import Display as D
 import GameGrid as GG
@@ -19,6 +21,7 @@ class BattleScreen(D.Display):
         self.username = username
         self.placeShips = True
         self.player_turn = True  # turn flag that swtiches between player and CPU
+
         self.turn_message = self.username
         self.pause_button = B.Button(C.PAUSE_X, C.PAUSE_Y, C.PAUSE_WIDTH_HEIGHT, C.PAUSE_WIDTH_HEIGHT,
                                      C.PAUSE_TEXT, C.font, C.GREY, C.WHITE_FONT_COLOR)
@@ -85,6 +88,7 @@ class BattleScreen(D.Display):
         self.create_grid() # Draw the grid on the screen
         self.draw_preview_ship() # Draw the ship on the screen
         # self.sounds.play_song("conflict")
+
         while self.running:
 
             for event in pygame.event.get():
@@ -210,9 +214,7 @@ class BattleScreen(D.Display):
 
             pygame.display.flip()
             self.pause_button.draw(self.screen)
-
             pygame.display.flip()
-
 
     # Handle player turn
     def player_turn_action(self, row, col):
@@ -236,6 +238,7 @@ class BattleScreen(D.Display):
             self.screen.blit(self.water_ripple, (row, col))  # Draw water ripple
             # self.sounds.play_sound("splash")
         self.game_display.draw_message(self.message)        # Draws the result message on the screen
+
         self.player_turn = False  # End player turn
         self.turn_message = "CPU"
 

@@ -91,6 +91,7 @@ class Main_Menu(D.Display):
                     self.running = False
                     battle_screen.startDisplay(battle_screen.main_loop)
 
+
                 if self.options_button.is_clicked():
                     print("Options Selected")  # Transition to options screen
                     screen = OS.Options_Screen()
