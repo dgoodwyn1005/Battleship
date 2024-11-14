@@ -20,6 +20,8 @@ class CPU(Player):
             col = random.randint(0, self.board_size - 1)
             if (row, col) not in self.attacked_coords:
                 valid_move = True
+            elif len(self.attacked_coords) == self.board_size ** 2:  # If all coordinates have been attacked for testing
+                return None, None
         self.attacked_coords.add((row, col))
         # Call GameGrid's method to attack a tile.
         return grid.attack_tile(row, col), (row, col)

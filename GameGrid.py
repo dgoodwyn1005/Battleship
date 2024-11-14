@@ -1,12 +1,9 @@
-import numpy as np
-
-
 class GameGrid(object):
 
     def __init__(self, rows: int, columns: int):
         self.width = rows
         self.height = columns
-        self.grid = np.zeros(shape=(columns, rows))
+        self.grid = [[0 for _ in range(columns)] for _ in range(rows)]
 
 
     def __str__(self):
@@ -15,10 +12,10 @@ class GameGrid(object):
     # Update grid when a ship is placed
     def update_grid(self, index_x, index_y, value, ship):
         """Updates the values of the grid to the ship's length when a ship is placed to match its position"""
-        if not ship.rotated:
+        if not ship.rotated:        # When the ship is vertical
             for n in range(value):
                 self.grid[index_x][index_y + n] = value
-        else:
+        else:                       # When the ship is horizontal
             for n in range(value):
                 self.grid[index_x + n][index_y] = value
 
@@ -46,7 +43,6 @@ class GameGrid(object):
         """Attacks a tile and returns the value of the tile"""
         #  0: "None", 1: "destroyer", 2: "submarine", 3: "cruiser", 4: "battleship",
         #           5: "aircraft_carrier", 6: "hit", 7: "miss"
-
         value = self.grid[index_x][index_y]
         if value != 6 and value != 7:       # If the tile has not been attacked
             if value == 0:                  # If the tile is empty
