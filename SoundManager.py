@@ -1,10 +1,10 @@
 import pygame
 import Constants as C
 
-class Sound(object):
+class Sound:
     def __init__(self, m_vol = 100, s_vol = 100):
-        pygame.mixer.init()
         #Initialize sounds
+        pygame.mixer.init
         self.sounds = {}
         self.music = {}
         self.explosion_sound = pygame.mixer.Sound(C.AUDIO_FOLDER + "/explosion_sound.wav")
@@ -39,5 +39,3 @@ class Sound(object):
 
     def toggle_sounds(self, choice):
         self.play_sound_effects = choice
-
-    

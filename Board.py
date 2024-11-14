@@ -1,6 +1,8 @@
 import random
 import pygame
 import pygame.image
+import time
+
 import Constants as C
 import Display as D
 import GameGrid
@@ -92,6 +94,7 @@ class BattleScreen(D.Display):
             self.redraw_loaded_game(self.opponent_grid, C.OPPONENT_X_OFFSET, C.OPPONENT_Y_OFFSET,
                                     self.opponent_button_list, False)
         # self.sounds.play_song("conflict")
+
         while self.running:
 
             for event in pygame.event.get():
@@ -219,9 +222,7 @@ class BattleScreen(D.Display):
 
             pygame.display.flip()
             self.pause_button.draw(self.screen)
-
             pygame.display.flip()
-
 
     # Handle player turn
     def player_turn_action(self, row, col):
@@ -245,6 +246,7 @@ class BattleScreen(D.Display):
             self.screen.blit(self.water_ripple, (row, col))  # Draw water ripple
             # self.sounds.play_sound("splash")
         self.game_display.draw_message(self.message)        # Draws the result message on the screen
+
         self.player_turn = False  # End player turn
         self.turn_message = "CPU"
 

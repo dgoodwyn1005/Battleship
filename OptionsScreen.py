@@ -5,6 +5,7 @@ import Display as D
 import Constants as C
 import Button as B
 import GameDisplay as GD
+import SoundManager as SM
 
 class Options_Screen(D.Display):
 
@@ -28,8 +29,7 @@ class Options_Screen(D.Display):
         self.player_grid = player_grid
         self.opponent_grid = opponent_grid
         self.current_turn = current_turn
-
-
+        self.sounds = SM.Sound(100, 100)
 
     def draw_buttons_and_settings(self):
         # Draw buttons
@@ -59,20 +59,19 @@ class Options_Screen(D.Display):
         self.save_button.draw(self.screen)
         self.back_button.draw(self.screen)
 
-        self.game_display.draw_settings("On" if Options_Screen.play_music else "Off",
-                                        "On" if Options_Screen.play_sound_effects else "Off")
-        pygame.display.flip()
+        self.game_display.draw_settings("On" if self.sounds.play_music else "Off",
+                                        "On" if self.sounds.play_sound_effects else "Off")
+
 
 
     def toggle_music(self):
         """Toggle the music on and off"""
-        Options_Screen.play_music = not Options_Screen.play_music
+        self.sounds.toggle_music(not self.sounds.play_music)
         self.draw_buttons_and_settings()
-
 
     def toggle_sound_effects(self):
         """Toggle the sound effects on and off"""
-        Options_Screen.play_sound_effects = not Options_Screen.play_sound_effects
+        self.sounds.toggle_sounds(not self.sounds.play_sound_effects)
         self.draw_buttons_and_settings()
 
     def go_back(self):
@@ -96,7 +95,6 @@ class Options_Screen(D.Display):
                 data["opponent_grid"] = self.opponent_grid
                 data["current_turn"] = self.current_turn
                 json.dump(data, file)
-
 
     def main_loop(self):
         self.draw_buttons_and_settings()  # Draw the buttons and settings
