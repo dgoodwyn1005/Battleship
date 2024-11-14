@@ -5,8 +5,6 @@ import Display as D
 import Constants as C
 import Button as B
 import GameDisplay as GD
-import Ships
-
 
 class Options_Screen(D.Display):
 
@@ -14,8 +12,8 @@ class Options_Screen(D.Display):
     play_sound_effects = True
     # Initialize the screen and the parameters are used to save the game. None is default so that Main_Menu cannot
     # save a game that has not began
-    def __init__(self, player_grid = None, opponent_grid = None, current_turn = None, player_ships: Ships.Ships = None,
-                 opponent_ships: Ships.Ships = None):
+    def __init__(self, player_grid = None, opponent_grid = None, current_turn = None, player_ships = None,
+                 opponent_ships = None):
         super().__init__(screenName= C.OPTIONS_CAPTION, background= C.BLUE)
         self.music_button = B.Button(C.MUSIC_X, C.MUSIC_Y, C.MUSIC_WIDTH, C.MUSIC_HEIGHT, C.MUSIC_TEXT,
                                      C.FONT, C.GREY, C.WHITE_FONT_COLOR)
@@ -34,7 +32,7 @@ class Options_Screen(D.Display):
         self.current_turn = current_turn
         self.player_ships = player_ships
         self.opponent_ships = opponent_ships
-
+        self.sounds = SM.Sound(100, 100)
 
     def draw_buttons_and_settings(self):
         # Draw buttons
@@ -64,20 +62,19 @@ class Options_Screen(D.Display):
         self.save_button.draw(self.screen)
         self.back_button.draw(self.screen)
 
-        self.game_display.draw_settings("On" if Options_Screen.play_music else "Off",
-                                        "On" if Options_Screen.play_sound_effects else "Off")
-        pygame.display.flip()
+        self.game_display.draw_settings("On" if self.sounds.play_music else "Off",
+                                        "On" if self.sounds.play_sound_effects else "Off")
+
 
 
     def toggle_music(self):
         """Toggle the music on and off"""
-        Options_Screen.play_music = not Options_Screen.play_music
+        self.sounds.toggle_music(not self.sounds.play_music)
         self.draw_buttons_and_settings()
-
 
     def toggle_sound_effects(self):
         """Toggle the sound effects on and off"""
-        Options_Screen.play_sound_effects = not Options_Screen.play_sound_effects
+        self.sounds.toggle_sounds(not self.sounds.play_sound_effects)
         self.draw_buttons_and_settings()
 
     def go_back(self):
@@ -106,7 +103,6 @@ class Options_Screen(D.Display):
                 data["player_ship_coordinates"] = self.player_ships.head_coordinate
                 data["opponent_ships"] = self.opponent_ships
                 json.dump(data, file)
-
 
     def main_loop(self):
         self.draw_buttons_and_settings()  # Draw the buttons and settings

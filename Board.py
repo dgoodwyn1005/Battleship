@@ -1,6 +1,8 @@
 import random
 import pygame
 import pygame.image
+import time
+
 import Constants as C
 import Display as D
 import GameGrid as GG
@@ -106,7 +108,11 @@ class BattleScreen(D.Display):
             self.redraw_loaded_game(self.grid, C.X_OFFSET, C.Y_OFFSET, self.button_list, True)
             self.redraw_loaded_game(self.opponent_grid, C.OPPONENT_X_OFFSET, C.OPPONENT_Y_OFFSET,
                                     self.opponent_button_list, False)
+
         # self.sounds.play_song("conflict")
+
+
+
         while self.running:
             for event in pygame.event.get():
                 # Keyboard Input
@@ -244,6 +250,7 @@ class BattleScreen(D.Display):
     def player_turn_action(self, row, col):
         print(f"Player attacks tile ({row}, {col})")
         result = self.opponent_grid.attack_tile(row, col)      # Attack the tile and returns the result
+
         row = row * C.TILE_WIDTH + C.OPPONENT_X_OFFSET      # Convert row and col to x and y coordinates
         col = col * C.TILE_HEIGHT + C.OPPONENT_Y_OFFSET
         if result != -1:
@@ -255,8 +262,6 @@ class BattleScreen(D.Display):
             checkSunken = self.opponent_ships[5 - result].check_sunken()  # Check if ship is sunken
             if checkSunken:
                 self.show_sunken_ship(self.opponent_ships[5 - result])
-            # self.sounds.play_sound("explosion")
-            
             # self.sounds.play_sound("explosion")               Need to fix sound module
         else:
             self.message = "{} missed.".format(self.username)  # Update message if player misses
@@ -295,6 +300,7 @@ class BattleScreen(D.Display):
                 # self.sounds.play_sound("splash")
         except:  # If all tiles have been attacked, the game will not crash
             print("All tiles have been attacked")
+
         self.player_turn = True  # End CPU turn
         self.turn_message = self.username
         pygame.display.flip()
@@ -370,7 +376,6 @@ class BattleScreen(D.Display):
         # Draw the message on the screen
         self.game_display.draw_message(self.message)
 
-        # Update the display
         pygame.display.flip()
 
     def draw_preview_ship(self):
@@ -454,6 +459,7 @@ class BattleScreen(D.Display):
             if ship.sunken:           # If the ship is sunken, draw the sunken ship
                 self.show_sunken_ship(ship)
         pygame.display.flip()
+
 
     def redraw_loaded_game(self, grid: GG.GameGrid, x_offset, y_offset, button_list, cpu_player):
         """Redraw the loaded game on the screen"""
