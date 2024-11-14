@@ -5,13 +5,17 @@ import Display as D
 import Constants as C
 import Button as B
 import GameDisplay as GD
+import Ships
+
 
 class Options_Screen(D.Display):
 
     play_music = True
     play_sound_effects = True
-
-    def __init__(self, player_grid = None, opponent_grid = None, current_turn = None):
+    # Initialize the screen and the parameters are used to save the game. None is default so that Main_Menu cannot
+    # save a game that has not began
+    def __init__(self, player_grid = None, opponent_grid = None, current_turn = None, player_ships: Ships.Ships = None,
+                 opponent_ships: Ships.Ships = None):
         super().__init__(screenName= C.OPTIONS_CAPTION, background= C.BLUE)
         self.music_button = B.Button(C.MUSIC_X, C.MUSIC_Y, C.MUSIC_WIDTH, C.MUSIC_HEIGHT, C.MUSIC_TEXT,
                                      C.FONT, C.GREY, C.WHITE_FONT_COLOR)
@@ -28,7 +32,8 @@ class Options_Screen(D.Display):
         self.player_grid = player_grid
         self.opponent_grid = opponent_grid
         self.current_turn = current_turn
-
+        self.player_ships = player_ships
+        self.opponent_ships = opponent_ships
 
 
     def draw_buttons_and_settings(self):
@@ -89,12 +94,17 @@ class Options_Screen(D.Display):
 
     def save_game(self, save_name):
         """Save the game settings to a file"""
-        if self.player_grid != None and self.opponent_grid != None and self.current_turn != None:
+        if (self.player_grid != None and self.opponent_grid != None and len(self.player_ships) == 5
+                and len(self.opponent_ships) == 5):
             with open(C.GAME_FOLDER + save_name, "w") as file:
                 data = {}
                 data["player_grid"] = self.player_grid
                 data["opponent_grid"] = self.opponent_grid
                 data["current_turn"] = self.current_turn
+                for ship in self.player_ships:
+                    data[ship.name] = ship.head_coordinate
+                data["player_ship_coordinates"] = self.player_ships.head_coordinate
+                data["opponent_ships"] = self.opponent_ships
                 json.dump(data, file)
 
 
