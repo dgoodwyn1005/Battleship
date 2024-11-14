@@ -12,7 +12,7 @@ class Button(object):
         self.font = font  
         self.color = color  
         self.text_color = text_color
-        self.disabled = False
+        self.disabled = False       # Disables the button after clicking on the grid to prevent further clicks
 
     def draw(self, screen: pygame.Surface):
         # Draw the button rectangle

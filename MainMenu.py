@@ -1,3 +1,4 @@
+import json
 import pygame.display
 import Board as BG
 import Display as D
@@ -12,19 +13,23 @@ class Main_Menu(D.Display):
     def __init__(self):
         super().__init__(screenName= C.MENU_CAPTION, background= C.BLUE)
         self.start_button = B.Button(C.START_X, C.START_Y, C.START_WIDTH, C.START_HEIGHT, C.START_TEXT,
-                                     C.font, C.GREY, C.WHITE_FONT_COLOR)
+                                     C.FONT, C.GREY, C.WHITE_FONT_COLOR)
         self.options_button = B.Button(C.OPTIONS_X, C.OPTIONS_Y, C.OPTIONS_WIDTH, C.OPTIONS_HEIGHT, C.OPTIONS_TEXT,
-                                       C.font, C.GREY, C.WHITE_FONT_COLOR)
+                                       C.FONT, C.GREY, C.WHITE_FONT_COLOR)
         self.quit_button = B.Button(C.QUIT_X, C.QUIT_Y, C.QUIT_WIDTH, C.QUIT_HEIGHT, C.QUIT_TEXT,
-                                    C.font, C.GREY, C.WHITE_FONT_COLOR)
+                                    C.FONT, C.GREY, C.WHITE_FONT_COLOR)
+        self.load_game_button = B.Button(C.LOAD_X, C.LOAD_Y, C.LOAD_WIDTH, C.LOAD_HEIGHT, C.LOAD_TEXT,
+                                         C.FONT, C.GREY, C.WHITE_FONT_COLOR)
         
         # Initialize text box
         self.font = pygame.font.Font(None, 32)
-        self.textbox = TextBox(C.TEXTBOX_X, C.TEXTBOX_Y , C.TEXTBOX_WIDTH, C.TEXTBOX_HEIGHT, C.font)
+        self.textbox = TextBox(C.TEXTBOX_X, C.TEXTBOX_Y, C.TEXTBOX_WIDTH, C.TEXTBOX_HEIGHT, C.FONT)
         self.username = "Player 1"
-
         self.game_display = GD.GameDisplay(self.screen)
         self.draw_buttons_and_text()
+
+        # Create board object
+        self.board = BG.BattleScreen()
 
 
     def draw_buttons_and_text(self):
@@ -46,10 +51,16 @@ class Main_Menu(D.Display):
         else:
             self.quit_button.color = C.GREY
 
+        if self.load_game_button.is_hovered():
+            self.load_game_button.color = C.HOVER_COLOR
+        else:
+            self.load_game_button.color = C.GREY
+
         # Draw buttons
         self.start_button.draw(self.screen)
         self.options_button.draw(self.screen)
         self.quit_button.draw(self.screen)
+        self.load_game_button.draw(self.screen)
 
         # Rendering main menu title text
         menu_font = pygame.font.SysFont(None, 25)
@@ -66,6 +77,28 @@ class Main_Menu(D.Display):
         self.textbox.draw(self.screen)
 
         pygame.display.flip()
+
+    def load_game(self, save_name):
+        """Load the game from a saved file"""
+        with open(C.GAME_FOLDER + save_name, "r") as file:
+            data = json.load(file)
+            self.board.grid.grid = data["player_grid"]
+            self.board.opponent_grid.grid = data["opponent_grid"]
+            if data["current_turn"] == "Player 1":
+                self.board.player_turn = data["current_turn"]
+            else:
+                self.board.player_turn = not data["current_turn"]
+            self.board.ship_count = 5
+            self.board.startedBoard = True
+            self.board.placeShips = False
+            self.board.loaded_game = True
+            self.board.rotate_button.disabled = True
+            self.board.message = "Game loaded successfully"
+            self.screen.fill(C.LIGHTER_BLUE_COLOR)
+            self.board.startDisplay(self.board.main_loop)
+
+
+
 
     def main_loop(self):
 
@@ -84,23 +117,25 @@ class Main_Menu(D.Display):
 
                 # Handle button clicks
                 if self.start_button.is_clicked():
-
-                    print("Start Game")  # Transition to game loop
                     self.username = self.textbox.text if self.textbox.text else self.username
-                    battle_screen = BG.BattleScreen(username=self.username)
                     self.running = False
-                    battle_screen.startDisplay(battle_screen.main_loop)
+                    self.screen.fill(C.LIGHTER_BLUE_COLOR)
+                    self.board.startDisplay(self.board.main_loop)
+                    # battle_screen = BG.BattleScreen(username=self.username)
+                    # battle_screen.startDisplay(battle_screen.main_loop)
 
 
                 if self.options_button.is_clicked():
-                    print("Options Selected")  # Transition to options screen
+                  # Transition to options screen
                     screen = OS.Options_Screen()
                     screen.startDisplay(screen.main_loop)
 
                 if self.quit_button.is_clicked():
-
                     print("Quit Game")
                     self.running = False
+                if self.load_game_button.is_clicked():
+                    self.running = False
+                    self.load_game("save.json")
 
                
 

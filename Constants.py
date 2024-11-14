@@ -5,12 +5,12 @@ pygame.init()
 
 # IMAGES Folder
 IMAGE_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/images"
-
 # FONTS Folder
 FONTS_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/fonts"
-
 # AUDIO Folder
 AUDIO_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/audio"
+# GAME Folder
+GAME_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/saved_games/"
 
 # GRID
 TILE_WIDTH = 40
@@ -27,7 +27,7 @@ OPPONENT_Y_OFFSET = 80
 # TEXT
 WHITE_FONT_COLOR = (255, 255, 255)
 FONT_SIZE = 20
-font = pygame.font.Font(None, FONT_SIZE)    # Font for text rendering
+FONT = pygame.font.Font(None, FONT_SIZE)    # Font for text rendering
 
 # PAUSE BUTTON
 PAUSE_X = 760
@@ -103,6 +103,13 @@ QUIT_WIDTH = 200
 QUIT_HEIGHT = 50
 QUIT_TEXT = "Quit"
 
+# Load button
+LOAD_X = 600
+LOAD_Y = 600
+LOAD_WIDTH = 200
+LOAD_HEIGHT = 50
+LOAD_TEXT = "Load Game"
+
 # OPTIONS SCREEN
 
 # Music button
@@ -119,6 +126,13 @@ SOUNDS_Y = 300
 SOUNDS_WIDTH = 100
 SOUNDS_HEIGHT = 60
 SOUNDS_TEXT = "Toggle Sounds"
+
+# Save button
+SAVE_X = 610
+SAVE_Y = 400
+SAVE_WIDTH = 200
+SAVE_HEIGHT = 60
+SAVE_TEXT = "Save"
 
 # Back button
 BACK_X = 0
