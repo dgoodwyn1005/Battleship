@@ -1,37 +1,33 @@
 import os
 import json
-import random
-
 # Current Environment
 Environment = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 # Saved Account Document
-SAVED_ACCOUNT_DOCUMENT = Environment + "\SavedAccounts"
+SAVED_ACCOUNT_DOCUMENT = Environment + "/saved_accounts.json"
 
-class Account():
+class Account(object):
+    accounts = {}       # Holds all the accounts created
+    total_accounts = 0  # Total number of accounts created so far to create new ids for new accounts
     def __init__(self, username, password):
         self.username = username
         self.password = password
-        self.id = -1
         self.account_open = False
+        self.total_wins = 0
+        self.total_losses = 0
+        self.id = 0
 
-        self.un_list = []
-        self.pw_list = []
-
-    def log_in(self):
-        self.load_data()
-
-        if self.username in self.un_list and self.password in self.pw_list:
-            self.account_open = True
-            data = []
-            with open(SAVED_ACCOUNT_DOCUMENT) as file:
-                data = json.load(file)
-            
-            self.id = {i for i in data if data[i["Username"]] == self.username &
-                        data[i["Password"]] == self.password}
+    @classmethod
+    def log_in(cls, username, password):
+        """Checks if the account exists first in the accounts dictionary before creating an instance of Account"""
+        cls.load_data()
+        if username in Account.accounts and Account.accounts[username][0] == password:
+            print("Logged in")      # Used for testing purposes
+            return True
         else:
-            print("Wrong Username & Password")
-            self.account_open = False
+            print("Wrong Username & Password")  # Used for testing purposes
+            # self.account_open = False
+            return False
 
     def sign_out(self):
         if self.account_open:
@@ -39,28 +35,34 @@ class Account():
 
     def reset_password(self, new_pass):
         if self.account_open:
-            password = new_pass
+            self.password = new_pass
 
-    def load_data(self): #Loads all accounts
-        data = []
+    @classmethod
+    def load_data(cls): #Loads all accounts
         with open(SAVED_ACCOUNT_DOCUMENT) as file:
             data = json.load(file)
+            # add all accounts to the set from the account json file
+            count = 0   # used to remember the id for each account
+            for username, details in data["accounts"].items():
+                Account.accounts[details["username"]] = (details["password"], count, details["wins"], details["losses"])
+                count += 1
+                # total number of accounts used to create new ids for new accounts
+        Account.total_accounts = len(Account.accounts)
+        print(Account.accounts)
 
-        self.un_list = []
-        self.pw_list = []
-        for i in data: #i = current account id
-            self.un_list.append(i["Username"])
-            self.pw_list.append(i["Password"])
 
 
-    def new_account_data(self): #Adds new account to files
-        self.id = random.randint(1, 99999)
-        new_account = {}
-        u_and_p = []
-        u_and_p.append({"Username":self.username})
-        u_and_p.append({"Password":self.password})
+    def create_account(self): #Adds new account to files
+        Account.accounts[self.username] = (self.password, Account.total_accounts, self.total_wins, self.total_losses)
+        Account.total_accounts += 1
+        # with open(SAVED_ACCOUNT_DOCUMENT, "w") as file:
+        #     json.dump({"accounts": Account.accounts}, file)
 
-        new_account.update({self.id:u_and_p})
 
-        with open(SAVED_ACCOUNT_DOCUMENT) as file:
-            file.write(json.dumps(new_account))
+
+if __name__ == "__main__":
+    test = Account.log_in("testuser", "testpassword")
+    if test:
+        user = Account("testuser", "testpassword")
+        print(user.username)
+    Account.log_in("sydney", "mypassword")

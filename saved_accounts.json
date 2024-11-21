@@ -1,0 +1,25 @@
+{
+  "accounts": {
+    "0" : {
+      "username": "testuser",
+      "password": "testpassword",
+      "wins": 3,
+      "losses": 2,
+      "game_names": [
+        "save",
+        "game1",
+        "game2"
+      ]
+    },
+
+    "1" : {
+        "username": "testuser2",
+      "password": "yes321",
+      "wins": 1,
+      "losses": 4,
+      "game_names": [
+        "game3"
+      ]
+    }
+  }
+  }

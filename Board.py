@@ -22,6 +22,7 @@ class BattleScreen(D.Display):
         self.placeShips = True
         self.player_turn = True  # turn flag that swtiches between player and CPU
         self.game_over = False
+        self.signed_in = False
         self.turn_message = self.username
         self.pause_button = B.Button(C.PAUSE_X, C.PAUSE_Y, C.PAUSE_WIDTH_HEIGHT, C.PAUSE_WIDTH_HEIGHT,
                                      C.PAUSE_TEXT, C.FONT, C.GREY, C.WHITE_FONT_COLOR)
@@ -185,7 +186,6 @@ class BattleScreen(D.Display):
                                             self.placeShips = False
                                             self.message = "Ships placed. Begin attacking!"
                                             self.rotate_button.disabled = True  # Disable the rotate button
-
                                         # Draw the ship on the screen
                                         self.draw_preview_ship()
                                     else:
@@ -262,7 +262,8 @@ class BattleScreen(D.Display):
             checkSunken = self.opponent_ships[5 - result].check_sunken()  # Check if ship is sunken
             if checkSunken:
                 self.show_sunken_ship(self.opponent_ships[5 - result])
-            # self.sounds.play_sound("explosion")               Need to fix sound module
+            self.check_win_condition()  # Check if the game has been won
+            # self.sounds.play_sound("explosion")              # Need to fix sound module
         else:
             self.message = "{} missed.".format(self.username)  # Update message if player misses
             self.my_attacks.add((row, col, "miss"))  # Add x and y coordinates and miss to my_attacks

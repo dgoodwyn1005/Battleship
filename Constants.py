@@ -98,17 +98,17 @@ OPTIONS_TEXT = "Options"
 
 # Quit button
 QUIT_X = 600
-QUIT_Y = 500
+QUIT_Y = 600
 QUIT_WIDTH = 200
 QUIT_HEIGHT = 50
 QUIT_TEXT = "Quit"
 
-# Load button
-LOAD_X = 600
-LOAD_Y = 600
-LOAD_WIDTH = 200
-LOAD_HEIGHT = 50
-LOAD_TEXT = "Load Game"
+# Account button
+ACCOUNT_X = 600
+ACCOUNT_Y = 500
+ACCOUNT_WIDTH = 200
+ACCOUNT_HEIGHT = 50
+ACCOUNT_B_TEXT = "Account"
 
 # OPTIONS SCREEN
 
@@ -139,3 +139,58 @@ BACK_X = 0
 BACK_Y = 0
 BACK_WIDTH_HEIGHT = 50
 BACK_TEXT = "Back"
+
+
+# Account
+# Text fields
+ACCOUNT_CAPTION = "Account"
+USERNAME_X = 600
+USERNAME_Y = 300
+USERNAME_WIDTH = 200
+USERNAME_HEIGHT = 50
+ACCOUNT_PASSWORD_OFFSET = 100
+# Sign in button
+SIGN_IN_X = 700
+SIGN_IN_Y = 500
+SIGN_IN_WIDTH = 200
+SIGN_IN_HEIGHT = 50
+SIGN_IN_TEXT = "Sign In"
+# Register button
+REGISTER_X = 495
+REGISTER_Y = 500
+REGISTER_WIDTH = 200
+REGISTER_HEIGHT = 50
+REGISTER_TEXT = "Create Account"
+# Text next to text fields
+USERNAME_TEXT = "Username:"
+PASSWORD_TEXT = "Password:"
+USER_PASS_OFFSET = 100
+# Account message
+ACCOUNT_MESSAGE_X = 595
+ACCOUNT_MESSAGE_Y = 200
+ACCOUNT_TEXT = "Enter your account information"
+ACCOUNT_FONT = pygame.font.SysFont(None, 70)
+# Account sign in
+TOTAL_WINS_TEXT = "Total Wins: "
+TOTAL_LOSSES_TEXT = "Total Losses: "
+# Load game button
+LOAD_X = 600
+LOAD_Y = 500
+LOAD_WIDTH = 200
+LOAD_HEIGHT = 50
+LOAD_TEXT = "Load Game"
+# Start game button offset
+START_OFFSET_X = 300
+START_OFFSET_Y = 200
+
+# Reset password button
+RESET_PASS_TEXT = "Reset Password"
+RESET_PASS_X = 600
+RESET_PASS_Y = 700
+RESET_PASS_WIDTH = 200
+RESET_PASS_HEIGHT = 50
+# Reset password text field
+RESET_TEXT_X = 600
+RESET_TEXT_Y = 630
+RESET_TEXT_WIDTH = 200
+RESET_TEXT_HEIGHT = 50

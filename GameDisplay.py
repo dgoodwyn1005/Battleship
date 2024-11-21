@@ -29,7 +29,7 @@ class GameDisplay(object):
 # Draw the message in the center
     def draw_message(self, message):
         # Clear previous message by drawing a rectangle over it
-        message_rect = pygame.Rect(self.screen.get_width() // 3 , self.screen.get_height() // 15 - 10, self.screen.get_width() // 3, 30)
+        message_rect = pygame.Rect(self.screen.get_width() // 3, self.screen.get_height() // 15 - 10, self.screen.get_width() // 3, 30)
         self.screen.fill(C.LIGHTER_BLUE_COLOR, message_rect)
 
         # Draw the new message

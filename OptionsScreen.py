@@ -81,14 +81,6 @@ class Options_Screen(D.Display):
         """When the back button is clicked, go back to the main menu"""
         self.running = False
 
-    def play_explosion_sound(self):
-        if Options_Screen.play_sound_effects:
-            self.explosion_sound.play()
-
-    def play_water_sound(self):
-        if Options_Screen.play_sound_effects:
-            self.water_sound.play()
-
     def save_game(self, save_name):
         """Save the game settings to a file"""
         if (self.player_grid != None and self.opponent_grid != None and len(self.player_ships) == 5

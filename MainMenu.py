@@ -1,11 +1,11 @@
-import json
 import pygame.display
-import Board as BG
 import Display as D
 import Constants as C
 import Button as B
 import GameDisplay as GD
+import Board as BG
 import OptionsScreen as OS
+import Sign_In as SI
 from textbox import TextBox
 
 
@@ -18,9 +18,8 @@ class Main_Menu(D.Display):
                                        C.FONT, C.GREY, C.WHITE_FONT_COLOR)
         self.quit_button = B.Button(C.QUIT_X, C.QUIT_Y, C.QUIT_WIDTH, C.QUIT_HEIGHT, C.QUIT_TEXT,
                                     C.FONT, C.GREY, C.WHITE_FONT_COLOR)
-        self.load_game_button = B.Button(C.LOAD_X, C.LOAD_Y, C.LOAD_WIDTH, C.LOAD_HEIGHT, C.LOAD_TEXT,
-                                         C.FONT, C.GREY, C.WHITE_FONT_COLOR)
-        
+        self.account_button = B.Button(C.ACCOUNT_X, C.ACCOUNT_Y, C.ACCOUNT_WIDTH, C.ACCOUNT_HEIGHT, C.ACCOUNT_B_TEXT,
+                                       C.FONT, C.GREY, C.WHITE_FONT_COLOR)
         # Initialize text box
         self.font = pygame.font.Font(None, 32)
         self.textbox = TextBox(C.TEXTBOX_X, C.TEXTBOX_Y, C.TEXTBOX_WIDTH, C.TEXTBOX_HEIGHT, C.FONT)
@@ -28,11 +27,8 @@ class Main_Menu(D.Display):
         self.game_display = GD.GameDisplay(self.screen)
         self.draw_buttons_and_text()
 
-        # Create board object
-        self.board = BG.BattleScreen()
-
-
     def draw_buttons_and_text(self):
+        """Draws the buttons and text on the screen"""
         # self.screen.fill(C.BLUE)
 
         # Detect mouse hover and change button colors accordingly
@@ -40,27 +36,27 @@ class Main_Menu(D.Display):
             self.start_button.color = C.HOVER_COLOR
         else:
             self.start_button.color = C.GREY
-
+        # Check for hover and change options button colors
         if self.options_button.is_hovered():
             self.options_button.color = C.HOVER_COLOR
         else:
             self.options_button.color = C.GREY
-
+        # Check for hover and change quit button colors
         if self.quit_button.is_hovered():
             self.quit_button.color = C.HOVER_COLOR
         else:
             self.quit_button.color = C.GREY
-
-        if self.load_game_button.is_hovered():
-            self.load_game_button.color = C.HOVER_COLOR
+        # Check for hover and change account button colors
+        if self.account_button.is_hovered():
+            self.account_button.color = C.HOVER_COLOR
         else:
-            self.load_game_button.color = C.GREY
+            self.account_button.color = C.GREY
 
         # Draw buttons
         self.start_button.draw(self.screen)
         self.options_button.draw(self.screen)
         self.quit_button.draw(self.screen)
-        self.load_game_button.draw(self.screen)
+        self.account_button.draw(self.screen)
 
         # Rendering main menu title text
         menu_font = pygame.font.SysFont(None, 25)
@@ -78,28 +74,6 @@ class Main_Menu(D.Display):
 
         pygame.display.flip()
 
-    def load_game(self, save_name):
-        """Load the game from a saved file"""
-        with open(C.GAME_FOLDER + save_name, "r") as file:
-            data = json.load(file)
-            self.board.grid.grid = data["player_grid"]
-            self.board.opponent_grid.grid = data["opponent_grid"]
-            if data["current_turn"] == "Player 1":
-                self.board.player_turn = data["current_turn"]
-            else:
-                self.board.player_turn = not data["current_turn"]
-            self.board.ship_count = 5
-            self.board.startedBoard = True
-            self.board.placeShips = False
-            self.board.loaded_game = True
-            self.board.rotate_button.disabled = True
-            self.board.message = "Game loaded successfully"
-            self.screen.fill(C.LIGHTER_BLUE_COLOR)
-            self.board.startDisplay(self.board.main_loop)
-
-
-
-
     def main_loop(self):
 
         while self.running:
@@ -111,18 +85,15 @@ class Main_Menu(D.Display):
                 # Handle text box events
                 self.textbox.handle_event(event)
 
-                # Update the username if Enter is pressed
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                    self.username = self.textbox.text
-
                 # Handle button clicks
                 if self.start_button.is_clicked():
                     self.username = self.textbox.text if self.textbox.text else self.username
                     self.running = False
                     self.screen.fill(C.LIGHTER_BLUE_COLOR)
-                    self.board.startDisplay(self.board.main_loop)
-                    # battle_screen = BG.BattleScreen(username=self.username)
-                    # battle_screen.startDisplay(battle_screen.main_loop)
+                    # self.board.username = self.username
+                    # self.board.startDisplay(self.board.main_loop)
+                    battle_screen = BG.BattleScreen(username=self.username)
+                    battle_screen.startDisplay(battle_screen.main_loop)
 
 
                 if self.options_button.is_clicked():
@@ -130,15 +101,14 @@ class Main_Menu(D.Display):
                     screen = OS.Options_Screen()
                     screen.startDisplay(screen.main_loop)
 
+                if self.account_button.is_clicked():
+                    # Transition to account screen
+                    login_screen = SI.Sign_In_Display()
+                    login_screen.startDisplay(login_screen.main_loop)
+
                 if self.quit_button.is_clicked():
                     print("Quit Game")
                     self.running = False
-                if self.load_game_button.is_clicked():
-                    self.running = False
-                    self.load_game("save.json")
-
-               
-
             self.screen.fill(C.BLUE)
             self.draw_buttons_and_text()
 
