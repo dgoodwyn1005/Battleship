@@ -55,8 +55,9 @@ class Account(object):
     def create_account(self): #Adds new account to files
         Account.accounts[self.username] = (self.password, Account.total_accounts, self.total_wins, self.total_losses)
         Account.total_accounts += 1
-        # with open(SAVED_ACCOUNT_DOCUMENT, "w") as file:
-        #     json.dump({"accounts": Account.accounts}, file)
+        with open(SAVED_ACCOUNT_DOCUMENT, "w") as file:
+            json.dump({"accounts": {str(details[1]): {"username": username, "password": details[0], "wins": details[2],
+                       "losses": details[3]} for username, details in Account.accounts.items()}}, file, indent=4)
 
 
 
