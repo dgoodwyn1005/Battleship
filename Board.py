@@ -117,7 +117,7 @@ class BattleScreen(D.Display):
                 if self.pause_button.is_clicked():
                     # Pass the grids and current turn to the Options Screen in case the user wants to save the game
                     op_screen = OS.Options_Screen(self.grid.grid, self.opponent_grid.grid, self.player_turn,
-                                                  self.ships, self.opponent_ships)
+                                                  self.ships, self.opponent_ships, self.signed_in, self.username)
                     op_screen.startDisplay(op_screen.main_loop)
                     # Redraw Board screen after returning from the Pause Menu
 
