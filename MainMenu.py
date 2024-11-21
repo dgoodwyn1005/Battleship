@@ -95,6 +95,7 @@ class Main_Menu(D.Display):
                     battle_screen = BG.BattleScreen(username=self.username)
                     battle_screen.startDisplay(battle_screen.main_loop)
 
+
                 if self.options_button.is_clicked():
                   # Transition to options screen
                     screen = OS.Options_Screen()
