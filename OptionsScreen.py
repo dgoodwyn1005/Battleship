@@ -15,7 +15,7 @@ class Options_Screen(D.Display):
     # Initialize the screen and the parameters are used to save the game. None is default so that Main_Menu cannot
     # save a game that has not began
     def __init__(self, player_grid = None, opponent_grid = None, current_turn = None, player_ships: [Ships.Ships] = None,
-                 opponent_ships: [Ships.Ships] = None, signed_in = False, username = None):
+                 opponent_ships: [Ships.Ships] = None, signed_in=False, username=None):
         super().__init__(screenName= C.OPTIONS_CAPTION, background= C.BLUE)
         self.music_button = B.Button(C.MUSIC_X, C.MUSIC_Y, C.MUSIC_WIDTH, C.MUSIC_HEIGHT, C.MUSIC_TEXT,
                                      C.FONT, C.GREY, C.WHITE_FONT_COLOR)
@@ -90,17 +90,16 @@ class Options_Screen(D.Display):
 
     def save_game(self, save_name):
         """Save the game settings to a file"""
-        if (self.player_grid != None and self.opponent_grid != None and len(self.player_ships) == 5
-                and len(self.opponent_ships) == 5):
+        if self.player_grid != None and self.player_ships[4].head_coordinate != (-1, -1) and self.signed_in != False:
             with open(C.GAME_FOLDER + save_name, "w") as file:
                 data = {}
                 data["player_grid"] = self.player_grid
                 data["opponent_grid"] = self.opponent_grid
                 data["current_turn"] = self.current_turn
                 for ship in self.player_ships:
-                    data[ship.name] = ship.head_coordinate
-                data["player_ship_coordinates"] = self.player_ships.head_coordinate
-                data["opponent_ships"] = self.opponent_ships
+                    data["my_" + ship.name] = (ship.head_coordinate, ship.rotated, ship.sunken, ship.hit_count)
+                for ship in self.opponent_ships:
+                    data["opp_" + ship.name] = (ship.head_coordinate, ship.rotated, ship.sunken, ship.hit_count)
                 json.dump(data, file, indent=4)
 
     def check_valid_name(self, name: str):
@@ -129,7 +128,7 @@ class Options_Screen(D.Display):
                 if event.type == pygame.QUIT:
                     self.running = False
                 self.filename_textbox.handle_event(event)
-                # Mousebutton ensures only one click is registered
+                # Mouse button ensures only one click is registered
                 if self.music_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
                     self.toggle_music()
                 elif self.sounds_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
@@ -139,6 +138,8 @@ class Options_Screen(D.Display):
                     filename = self.filename_textbox.text
                     if not self.signed_in:
                         self.message_label = C.FONT.render("You must be signed in to save a game", True, C.RED)
+                    elif self.player_ships[4].head_coordinate == (-1, -1):
+                        self.message_label = C.FONT.render("You must place all ships to save a game", True, C.RED)
                     elif self.check_valid_name(filename):
                         self.save_game(filename + ".json")
                         self.message_label = C.FONT.render("Game saved!", True, C.WHITE_FONT_COLOR)

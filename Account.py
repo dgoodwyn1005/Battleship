@@ -34,6 +34,7 @@ class Account(object):
             self.account_open = False
 
     def reset_password(self, new_pass):
+        """Resets the password of the current account"""
         if self.account_open:
             self.password = new_pass
 
@@ -48,7 +49,6 @@ class Account(object):
                 count += 1
                 # total number of accounts used to create new ids for new accounts
         Account.total_accounts = len(Account.accounts)
-        print(Account.accounts)
 
 
 

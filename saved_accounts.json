@@ -23,6 +23,12 @@
             "password": "321",
             "wins": 0,
             "losses": 0
+        },
+        "4": {
+            "username": "billy",
+            "password": "wanda",
+            "wins": 0,
+            "losses": 0
         }
     }
 }

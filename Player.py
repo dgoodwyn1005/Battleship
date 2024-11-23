@@ -1,5 +1,5 @@
 import random
-class Player:
+class Player(object):
     def __init__(self):
         # keep track of coordinates that have already been attacked
         self.attacked_coords = set()
@@ -12,6 +12,7 @@ class CPU(Player):
         self.board_size = board_size
         
         # Store adjacent tiles for targeting
+
         self.targeting_queue = []
 
         #Track last successful hit
@@ -21,6 +22,7 @@ class CPU(Player):
     def make_move(self, grid):
         """The CPU picks coordinates to attack randomly at first, and the CPU will target adjacent tiles if a hit is successful."""
         print(f"Starting make_move. Targeting queue length: {len(self.targeting_queue)}") #DEBUG
+
         # If targeting queue is not empty, use the targeting queue
         if self.targeting_queue:
             print(f"Targeting queue: {self.targeting_queue}") #DEBUG
@@ -37,6 +39,7 @@ class CPU(Player):
                     self.add_adjacent_tiles(row, col)
                 return result, (row, col)
         
+
         # If targeting queue is empty, make a random move
         print("CPU falling back to random move") #DEBUG
         valid_move = False

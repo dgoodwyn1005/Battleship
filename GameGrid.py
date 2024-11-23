@@ -56,5 +56,4 @@ class GameGrid(object):
                 print(f"Attack at ({index_x}, {index_y}) was a hit") #DEBUG
 
                 return value
-        print(f"Attack at ({index_x}, {index_y}) was already attacked") #DEBUG
         return -1
