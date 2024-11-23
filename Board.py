@@ -1,6 +1,8 @@
 import random
 import pygame
 import pygame.image
+import time
+
 import Constants as C
 import Display as D
 import GameGrid as GG
@@ -30,6 +32,7 @@ class BattleScreen(D.Display):
         # Load Game Assets
 
         # self.sounds = SM.Sound()    # This is the reason for the black screen. The sound is not being loaded properly
+
 
         # Load Grid and Water Tiles
         grid_tile = pygame.image.load(C.IMAGE_FOLDER + "/grid.png")
@@ -109,10 +112,16 @@ class BattleScreen(D.Display):
             self.redraw_loaded_game(self.grid, C.X_OFFSET, C.Y_OFFSET, self.button_list, True)
             self.redraw_loaded_game(self.opponent_grid, C.OPPONENT_X_OFFSET, C.OPPONENT_Y_OFFSET,
                                     self.opponent_button_list, False)
+
         # self.sounds.play_song("conflict")
+
+
+
         while self.running:
             if self.game_over:
                 self.running = False
+
+                
             for event in pygame.event.get():
                 # Keyboard Input
                 if event.type == pygame.QUIT:
@@ -121,7 +130,7 @@ class BattleScreen(D.Display):
                 if self.pause_button.is_clicked():
                     # Pass the grids and current turn to the Options Screen in case the user wants to save the game
                     op_screen = OS.Options_Screen(self.grid.grid, self.opponent_grid.grid, self.player_turn,
-                                                  self.ships, self.opponent_ships, self.signed_in, self.username)
+                                                  self.ships, self.opponent_ships)
                     op_screen.startDisplay(op_screen.main_loop)
                     # Redraw Board screen after returning from the Pause Menu
 
@@ -253,6 +262,7 @@ class BattleScreen(D.Display):
     def player_turn_action(self, row, col):
         print(f"Player attacks tile ({row}, {col})")
         result = self.opponent_grid.attack_tile(row, col)      # Attack the tile and returns the result
+
         row = row * C.TILE_WIDTH + C.OPPONENT_X_OFFSET      # Convert row and col to x and y coordinates
         col = col * C.TILE_HEIGHT + C.OPPONENT_Y_OFFSET
         if result != -1:
@@ -264,6 +274,7 @@ class BattleScreen(D.Display):
             checkSunken = self.opponent_ships[5 - result].check_sunken()  # Check if ship is sunken
             if checkSunken:
                 self.show_sunken_ship(self.opponent_ships[5 - result])
+                self.cpu_ships_remaining -= 1
             self.check_win_condition()  # Check if the game has been won
             # self.sounds.play_sound("explosion")              # Need to fix sound module
         else:
@@ -276,12 +287,13 @@ class BattleScreen(D.Display):
         self.player_turn = False  # End player turn
         self.turn_message = "CPU"
         pygame.display.flip()
-        pygame.time.delay(100)
+        pygame.time.delay(300)
 
 
     # Handle CPU turn
     def cpu_turn(self):
         """CPU makes a move and it displays on the 1st player's grid"""
+
         result = self.cpu_player.make_move(self.grid)  # CPU chooses a tile to attack
 
         row = result[1][0] * C.TILE_WIDTH + C.X_OFFSET  # Convert grid coordinates to screen coordinates
@@ -303,10 +315,12 @@ class BattleScreen(D.Display):
             self.screen.blit(self.water_ripple, (row, col))  # Draw water ripple
 
         self.game_display.draw_message(self.message)  # Draws the result message on the screen
+
         self.player_turn = True  # End CPU turn
         self.turn_message = self.username
         pygame.display.flip()
         pygame.time.delay(300)
+
 
     def create_grid(self):
         """Draws both grids onto the screen, creates buttons for each tile, and them to a list"""
@@ -383,7 +397,6 @@ class BattleScreen(D.Display):
         # Draw the message on the screen
         self.game_display.draw_message(self.message)
 
-        # Update the display
         pygame.display.flip()
 
     def draw_preview_ship(self):
@@ -467,6 +480,7 @@ class BattleScreen(D.Display):
             if ship.sunken:           # If the ship is sunken, draw the sunken ship
                 self.show_sunken_ship(ship)
         pygame.display.flip()
+
 
     def redraw_loaded_game(self, grid: GG.GameGrid, x_offset, y_offset, button_list, cpu_player):
         """Redraw the loaded game on the screen"""
