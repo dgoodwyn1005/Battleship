@@ -52,3 +52,4 @@ class GameGrid(object):
             else:
                 self.grid[index_x][index_y] = 6  # Mark as hit
                 return value
+        return -1

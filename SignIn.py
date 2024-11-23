@@ -7,7 +7,7 @@ import Account as A
 import AccountDisplay as AD
 
 
-class Sign_In_Display(D.Display):
+class SignInDisplay(D.Display):
 
     def __init__(self):
         super().__init__(screenName= C.ACCOUNT_CAPTION, background= C.BLUE)
@@ -15,7 +15,7 @@ class Sign_In_Display(D.Display):
         self.password = ""
         self.username_text = TextBox(C.USERNAME_X, C.USERNAME_Y, C.USERNAME_WIDTH, C.USERNAME_HEIGHT, C.FONT)
         self.password_text = TextBox(C.USERNAME_X, C.USERNAME_Y + C.ACCOUNT_PASSWORD_OFFSET,
-                                     C.USERNAME_WIDTH, C.USERNAME_HEIGHT, C.FONT)
+                                     C.USERNAME_WIDTH, C.USERNAME_HEIGHT, C.FONT, is_password=True)
         self.sign_in_button = B.Button(C.SIGN_IN_X, C.SIGN_IN_Y, C.SIGN_IN_WIDTH, C.SIGN_IN_HEIGHT, C.SIGN_IN_TEXT,
                                        C.FONT, C.GREY, C.WHITE_FONT_COLOR)
         self.account_label = C.FONT.render(C.ACCOUNT_TEXT, True, C.WHITE_FONT_COLOR)  # Create the account label
@@ -78,7 +78,7 @@ class Sign_In_Display(D.Display):
                     # Verify that the accounts exists
                     verify = A.Account.log_in(self.username_text.text, self.password_text.text)
                     if verify:
-                        user = A.Account("testuser", "testpassword")
+                        user = A.Account(self.username_text.text, self.password_text.text)
                         self.account_label = C.FONT.render("Account verified", True, C.WHITE_FONT_COLOR)
                         self.running = False
                         user_details = AD.AccountDisplay(user)
@@ -100,5 +100,5 @@ class Sign_In_Display(D.Display):
 
 
 if __name__ == '__main__':
-    account = Sign_In_Display()
+    account = SignInDisplay()
     account.startDisplay(account.main_loop)

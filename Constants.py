@@ -149,7 +149,6 @@ BACK_Y = 0
 BACK_WIDTH_HEIGHT = 50
 BACK_TEXT = "Back"
 
-
 # Account
 # Text fields
 ACCOUNT_CAPTION = "Account"
@@ -191,7 +190,6 @@ LOAD_TEXT = "Load Game"
 # Start game button offset
 START_OFFSET_X = 300
 START_OFFSET_Y = 200
-
 # Reset password button
 RESET_PASS_TEXT = "Reset Password"
 RESET_PASS_X = 600
@@ -203,3 +201,9 @@ RESET_TEXT_X = 600
 RESET_TEXT_Y = 630
 RESET_TEXT_WIDTH = 200
 RESET_TEXT_HEIGHT = 50
+# Sign out button
+SIGN_OUT_TEXT = "Sign Out"
+SIGN_OUT_X = 900
+SIGN_OUT_Y = 500
+SIGN_OUT_WIDTH = 200
+SIGN_OUT_HEIGHT = 50

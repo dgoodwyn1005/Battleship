@@ -5,7 +5,7 @@ import Button as B
 import GameDisplay as GD
 import Board as BG
 import OptionsScreen as OS
-import Sign_In as SI
+import SignIn as SI
 from textbox import TextBox
 
 
@@ -102,7 +102,7 @@ class Main_Menu(D.Display):
 
                 if self.account_button.is_clicked():
                     # Transition to account screen
-                    login_screen = SI.Sign_In_Display()
+                    login_screen = SI.SignInDisplay()
                     login_screen.startDisplay(login_screen.main_loop)
 
                 if self.quit_button.is_clicked():

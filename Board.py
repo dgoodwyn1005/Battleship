@@ -29,7 +29,7 @@ class BattleScreen(D.Display):
 
         # Load Game Assets
 
-        # self.sounds = SM.Sound()        # This is the reason for the black screen. The sound is not being loaded properly
+        # self.sounds = SM.Sound()    # This is the reason for the black screen. The sound is not being loaded properly
 
         # Load Grid and Water Tiles
         grid_tile = pygame.image.load(C.IMAGE_FOLDER + "/grid.png")
@@ -89,13 +89,15 @@ class BattleScreen(D.Display):
             self.game_display.draw_message(self.message)
             pygame.display.flip()
             self.game_over = True
-            #self.running = False
+            pygame.time.delay(8000)
+            self.running = False
         elif self.cpu_ships_remaining == 0:
             self.message = "{} Wins!".format(self.username)
             self.game_display.draw_message(self.message)
             pygame.display.flip()
             self.game_over = True
-            #self.running = False
+            pygame.time.delay(8000)
+            self.running = False
     # Main Game Loop
     def main_loop(self):
         pygame.display.flip()
@@ -109,6 +111,8 @@ class BattleScreen(D.Display):
                                     self.opponent_button_list, False)
         # self.sounds.play_song("conflict")
         while self.running:
+            if self.game_over:
+                self.running = False
             for event in pygame.event.get():
                 # Keyboard Input
                 if event.type == pygame.QUIT:
@@ -144,21 +148,27 @@ class BattleScreen(D.Display):
 
                                 # Scale the ship to the correct size based on the ship length
                                 loaded_ship = pygame.transform.scale(loaded_ship,
-                                                                  (C.TILE_WIDTH, C.TILE_HEIGHT*current_ship.length))
+                                                                   (C.TILE_WIDTH, C.TILE_HEIGHT *
+                                                                    current_ship.length))
                                 if current_ship.rotated:
                                     loaded_ship = pygame.transform.rotate(loaded_ship, 90)
 
-                                # Because the tiles are offset by 40 pixels, we divide by 40 to get the correct grid location
+                                # Because the tiles are offset by 40 pixels, we divide by 40 to get the
+                                # correct grid location
                                 if ((button.y//C.TILE_HEIGHT + current_ship.length <= 11 and not current_ship.rotated)
-                                        or (button.x//C.TILE_HEIGHT + current_ship.length <= 11 and current_ship.rotated)):
+                                        or (button.x//C.TILE_HEIGHT + current_ship.length <= 11 and
+                                            current_ship.rotated)):
 
-                                    # Check if the ship can be placed on the grid (i.e. if it does not overlap with another ship)
-                                    tile_check = self.grid.check_tile(button.x // C.TILE_HEIGHT - 1, button.y // C.TILE_HEIGHT - 1,
+                                    # Check if the ship can be placed on the grid (i.e. if it does not overlap
+                                    # with another ship)
+                                    tile_check = self.grid.check_tile(button.x // C.TILE_HEIGHT - 1,
+                                                                      button.y // C.TILE_HEIGHT - 1,
                                                                       current_ship.length, current_ship.rotated)
 
                                     if tile_check:
                                         # Update the grid with the ship
-                                        self.grid.update_grid(button.x//C.TILE_HEIGHT - 1, button.y//C.TILE_HEIGHT - 1, current_ship.length, current_ship)
+                                        self.grid.update_grid(button.x//C.TILE_HEIGHT - 1, button.y//C.TILE_HEIGHT - 1,
+                                                              current_ship.length, current_ship)
 
                                         #Update coordinate on ship
                                         current_ship.head_coordinate = (button.x, button.y)
@@ -200,7 +210,8 @@ class BattleScreen(D.Display):
                     # Check if the player has clicked on the opponent grid after ships have been placed
                     if self.player_turn and not self.placeShips:
                         for opponent_button in self.opponent_button_list:
-                            if opponent_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN and not opponent_button.disabled:
+                            if (opponent_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN and not
+                            opponent_button.disabled):
                                 row = (opponent_button.x - C.OPPONENT_X_OFFSET) // C.TILE_WIDTH
                                 col = (opponent_button.y - C.OPPONENT_Y_OFFSET) // C.TILE_HEIGHT
                                 self.player_turn_action(row, col)
@@ -208,15 +219,13 @@ class BattleScreen(D.Display):
                                 self.turn_message = "CPU"
                                 self.game_display.draw_turn_indicator(self.turn_message)
                                 pygame.display.flip()
-
-                if not self.player_turn and not self.placeShips:    # CPU turn begins after all ships have been placed and player has attacked
+                # CPU turn begins after all ships have been placed and player has attacked
+                if not self.player_turn and not self.placeShips:
                     # CPU can start making moves
                     self.cpu_turn()
                     self.turn_message = self.username
                     self.game_display.draw_turn_indicator(self.turn_message)
                     pygame.display.flip()
-
-
             # Check if the pause button is hovered and change color accordingly
             if self.pause_button.is_hovered():
                 self.pause_button.color = C.HOVER_COLOR
@@ -273,31 +282,31 @@ class BattleScreen(D.Display):
     # Handle CPU turn
     def cpu_turn(self):
         """CPU makes a move and it displays on the 1st player's grid"""
-        try:  # For testing purposes, if all tiles have been attacked, the game will not crash
-            result = self.cpu_player.make_move(self.grid)
-            row = result[1][0] * C.TILE_WIDTH + C.X_OFFSET
-            col = result[1][1] * C.TILE_HEIGHT + C.Y_OFFSET
-            if result[0] != -1:
-                self.message = "Cpu hit a ship"
-                self.ships[result[0] - 1].hit_count += 1
-                self.opponent_attacks.add((row, col, "hit"))
-                self.screen.blit(self.explosion, (row, col))
-                # self.sounds.play_sound("explosion")
-                # Check if the ship is sunken
-                if self.ships[int(result[0]) - 1].check_sunken():
-                    self.player_ships_remaining -= 1
-                self.check_win_condition()
-            else:
-                self.message = "CPU missed."
-                self.opponent_attacks.add((row, col, "miss"))
-                self.screen.blit(self.water_ripple, (row, col))
-                # self.sounds.play_sound("splash")
-        except:  # If all tiles have been attacked, the game will not crash
-            print("All tiles have been attacked")
+        result = self.cpu_player.make_move(self.grid)  # CPU chooses a tile to attack
+
+        row = result[1][0] * C.TILE_WIDTH + C.X_OFFSET  # Convert grid coordinates to screen coordinates
+        col = result[1][1] * C.TILE_HEIGHT + C.Y_OFFSET
+
+        if result[0] != -1:
+            self.message = "CPU hit a ship!"  # Update message if CPU hits a ship
+            self.ships[5 - result[0]].hit_count += 1  # Increase hit count for the player's ship
+            self.opponent_attacks.add((row, col, "hit"))  # Add hit to CPU's attack record
+            self.screen.blit(self.explosion, (row, col))  # Draw explosion
+            checkSunken = self.ships[5 - result[0]].check_sunken()  # Check if ship is sunken
+            if checkSunken:
+                self.show_sunken_ship(self.ships[5 - result[0]])  # Display sunken ship
+                self.player_ships_remaining -= 1  # Decrement the player's remaining ships
+            self.check_win_condition()  # Check if the game has been won
+        else:
+            self.message = "CPU missed."  # Update message if CPU misses
+            self.opponent_attacks.add((row, col, "miss"))  # Add miss to CPU's attack record
+            self.screen.blit(self.water_ripple, (row, col))  # Draw water ripple
+
+        self.game_display.draw_message(self.message)  # Draws the result message on the screen
         self.player_turn = True  # End CPU turn
         self.turn_message = self.username
         pygame.display.flip()
-        pygame.time.delay(400)
+        pygame.time.delay(300)
 
     def create_grid(self):
         """Draws both grids onto the screen, creates buttons for each tile, and them to a list"""
@@ -313,16 +322,21 @@ class BattleScreen(D.Display):
 
                 # Add buttons to list
                 gridButton = B.Button(x * C.TILE_WIDTH + C.X_OFFSET, y * C.TILE_HEIGHT + C.Y_OFFSET, C.TILE_WIDTH,
-                                      C.TILE_HEIGHT, chr(y + 97) + str(x + 1), C.FONT, C.BLACK_BACKGROUND_COLOR, C.LIGHT_GREY)
-                if self.startedBoard:       # Add buttons to list only when the board is first created to avoid duplicates
-                    self.button_list.append(gridButton) # Otherwise it tries to add the same buttons multiple times and causes problems
+                                      C.TILE_HEIGHT, chr(y + 97) + str(x + 1), C.FONT, C.BLACK_BACKGROUND_COLOR,
+                                      C.LIGHT_GREY)
+                # Add buttons to list only when the board is first created to avoid duplicates
+                # Otherwise it tries to add the same buttons multiple times and causes problems
+                if self.startedBoard:
+                    self.button_list.append(gridButton)
 
 
         # Draw the opponent's grid
         for x in range(self.opponent_grid.grid_length()):
             for y in range(self.opponent_grid.grid_height()):
-                self.screen.blit(self.water_tile, (x * C.TILE_WIDTH + C.OPPONENT_X_OFFSET, y * C.TILE_HEIGHT + C.OPPONENT_Y_OFFSET))
-                self.screen.blit(self.grid_tile, (x * C.TILE_WIDTH + C.OPPONENT_X_OFFSET, y * C.TILE_HEIGHT + C.OPPONENT_Y_OFFSET))
+                self.screen.blit(self.water_tile, (x * C.TILE_WIDTH + C.OPPONENT_X_OFFSET, y * C.TILE_HEIGHT +
+                                                   C.OPPONENT_Y_OFFSET))
+                self.screen.blit(self.grid_tile, (x * C.TILE_WIDTH + C.OPPONENT_X_OFFSET, y * C.TILE_HEIGHT +
+                                                  C.OPPONENT_Y_OFFSET))
 
                 # Add buttons to list
                 gridButton = B.Button(x * C.TILE_WIDTH + C.OPPONENT_X_OFFSET, y * C.TILE_HEIGHT + C.OPPONENT_Y_OFFSET, C.TILE_WIDTH,
@@ -479,7 +493,6 @@ class BattleScreen(D.Display):
                             self.cpu_player.attacked_coords.add((x, y, "miss"))
                         else:       # Otherwise, add the attacks to the my_attacks set
                             self.my_attacks.add((offset_x, offset_y, "miss"))
-
 
 
 
