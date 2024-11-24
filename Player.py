@@ -20,7 +20,8 @@ class CPU(Player):
 
     # The CPU will make a move based on if the targeting queue is empty or not
     def make_move(self, grid):
-        """The CPU picks coordinates to attack randomly at first, and the CPU will target adjacent tiles if a hit is successful."""
+        """The CPU picks coordinates to attack randomly at first, and the CPU will target adjacent tiles
+        if a hit is successful."""
         print(f"Starting make_move. Targeting queue length: {len(self.targeting_queue)}") #DEBUG
 
         # If targeting queue is not empty, use the targeting queue
