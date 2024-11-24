@@ -4,9 +4,9 @@ import Constants as C
 import Button as B
 import Account
 import Board as BG
-import json
 from textbox import TextBox
 import SignIn as SI
+import LoadGameDisplay as LGD
 
 
 class AccountDisplay(D.Display):
@@ -35,6 +35,7 @@ class AccountDisplay(D.Display):
                                           C.FONT, C.GREY, C.WHITE_FONT_COLOR)
         self.sign_out_button = B.Button(C.SIGN_OUT_X, C.SIGN_OUT_Y, C.SIGN_OUT_WIDTH, C.SIGN_OUT_HEIGHT,
                                         C.SIGN_OUT_TEXT, C.FONT, C.GREY, C.WHITE_FONT_COLOR)
+        self.buttons = [self.load_game_button, self.reset_pass_button, self.start_button, self.sign_out_button]
 
         # Create the board object
         self.board = BG.BattleScreen()
@@ -56,45 +57,10 @@ class AccountDisplay(D.Display):
         self.sign_out_button.draw(self.screen)
         pygame.display.flip()
 
-    def load_game(self, save_name):
-        """Load the game from a saved file"""
-        ship_names = ["airecraft_carrier", "battleship", "cruiser", "submarine", "destroyer"]
-        with open(C.GAME_FOLDER + save_name, "r") as file:
-            data = json.load(file)
-            self.board.grid.grid = data["player_grid"]
-            self.board.opponent_grid.grid = data["opponent_grid"]
-            if data["current_turn"] == "Player 1":
-                self.board.player_turn = data["current_turn"]
-            else:
-                self.board.player_turn = not data["current_turn"]
-            self.update_ships(data)
-            self.board.ship_count = 5
-            self.board.startedBoard = True
-            self.board.placeShips = False
-            self.board.loaded_game = True
-            self.board.rotate_button.disabled = True
-            self.board.message = "Game loaded successfully"
-            self.screen.fill(C.LIGHTER_BLUE_COLOR)
-            self.running = False    # Stop the account screen
-            self.board.startDisplay(self.board.main_loop)       # Start the game screen
+    def load_game(self):
+        load_screen = LGD.LoadGameDisplay(self.user.username)
+        load_screen.startDisplay(load_screen.main_loop)
 
-    def update_ships(self, data):
-        """Update the ships with the data from the saved game"""
-        count = 0
-        for key in data.keys():
-            if key.startswith("my_") or key.startswith("opp_"):  # To avoid the grid data and current turn data
-                if count == 5:
-                    count = 0   # Reset the count to 0 after going through the first 5 ships
-                if key.startswith("my_"):  # Handles players ships only
-                    ship_list = self.board.ships    # Assign the player ships list
-                else:
-                    ship_list = self.board.opponent_ships   # Assign the opponent ships list
-                ship = ship_list[count]  # Iterate through the ship list
-                ship.head_coordinate = data[key][0]  # Add the head coordinates to each ship
-                ship.rotated = data[key][1]  # Add the direction of the ship
-                ship.sunken = data[key][2]  # Add the sunken status of the ship
-                ship.hit_count = data[key][3]  # Add the hit count of the ship
-                count += 1
 
 
     def main_loop(self):
@@ -126,7 +92,7 @@ class AccountDisplay(D.Display):
                 # Handle when the buttons are clicked
                 if self.load_game_button.is_clicked():
                     self.running = False
-                    self.load_game("my_new_game.json")
+                    self.load_game()
                 # Handle resetting the password
                 if self.reset_pass_button.is_clicked():
                     self.user.reset_password(self.reset_password_textbox.text)
