@@ -38,7 +38,7 @@ class AccountDisplay(D.Display):
         self.buttons = [self.load_game_button, self.reset_pass_button, self.start_button, self.sign_out_button]
 
         # Create the board object
-        self.board = BG.BattleScreen()
+        self.board = BG.BattleScreen(user=self.user)
 
     def draw_account(self):
         """Draws the user information on the screen and the buttons"""
@@ -58,7 +58,7 @@ class AccountDisplay(D.Display):
         pygame.display.flip()
 
     def load_game(self):
-        load_screen = LGD.LoadGameDisplay(self.user.username)
+        load_screen = LGD.LoadGameDisplay(self.user.username, self.user)
         load_screen.startDisplay(load_screen.main_loop)
 
 

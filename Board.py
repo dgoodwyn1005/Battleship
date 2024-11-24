@@ -14,13 +14,14 @@ from Player import CPU
 
 class BattleScreen(D.Display):
 
-    def __init__(self, username="Player1"):
+    def __init__(self, username="Player1", user=None):
         super().__init__()
         self.username = username
         self.placeShips = True
         self.player_turn = True  # turn flag that swtiches between player and CPU
         self.game_over = False
         self.signed_in = False
+        self.user = user  # User object used to update the losses/wins for that user
         self.turn_message = self.username
         self.pause_button = B.Button(C.PAUSE_X, C.PAUSE_Y, C.PAUSE_WIDTH_HEIGHT, C.PAUSE_WIDTH_HEIGHT,
                                      C.PAUSE_TEXT, C.FONT, C.GREY, C.WHITE_FONT_COLOR)
@@ -89,15 +90,22 @@ class BattleScreen(D.Display):
             self.game_display.draw_message(self.message)
             pygame.display.flip()
             self.game_over = True
+            if self.signed_in:
+                self.user.update_win_loss(False)
+                print("Wins updated")
             pygame.time.delay(8000)
             self.running = False
         elif self.cpu_ships_remaining == 0:
             self.message = "{} Wins!".format(self.username)
             self.game_display.draw_message(self.message)
             pygame.display.flip()
+            if self.signed_in:
+                self.user.update_win_loss(True)
+                print("Wins updated")
             self.game_over = True
             pygame.time.delay(8000)
             self.running = False
+
     # Main Game Loop
     def main_loop(self):
         pygame.display.flip()
@@ -264,6 +272,7 @@ class BattleScreen(D.Display):
             checkSunken = self.opponent_ships[5 - result].check_sunken()  # Check if ship is sunken
             if checkSunken:
                 self.show_sunken_ship(self.opponent_ships[5 - result])
+                self.cpu_ships_remaining -= 1  # Decrement the CPU's remaining ships
             self.check_win_condition()  # Check if the game has been won
             # self.sounds.play_sound("explosion")              # Need to fix sound module
         else:

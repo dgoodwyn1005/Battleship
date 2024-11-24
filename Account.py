@@ -16,6 +16,9 @@ class Account(object):
         self.total_wins = 0
         self.total_losses = 0
         self.id = 0
+        Account.load_data()
+        if username in Account.accounts:
+            self.password, self.id, self.total_wins, self.total_losses = Account.accounts[username]
 
     @classmethod
     def log_in(cls, username, password):
@@ -38,6 +41,7 @@ class Account(object):
         if self.account_open:
             self.password = new_pass
 
+
     @classmethod
     def load_data(cls): #Loads all accounts
         with open(SAVED_ACCOUNT_DOCUMENT) as file:
@@ -49,6 +53,24 @@ class Account(object):
                 count += 1
                 # total number of accounts used to create new ids for new accounts
         Account.total_accounts = len(Account.accounts)
+
+    def update_win_loss(self, win):
+        if win:
+            self.total_wins += 1
+        else:
+            self.total_losses += 1
+        # Update the account dictionary with the new win and loss
+        with open(SAVED_ACCOUNT_DOCUMENT, 'r') as file:
+            data = json.load(file)
+
+        for account in data['accounts'].values():
+            if account['username'] == self.username:
+                account['wins'] = self.total_wins
+                account['losses'] = self.total_losses
+        with open(SAVED_ACCOUNT_DOCUMENT, 'w') as file:
+            json.dump(data, file, indent=4)
+        Account.accounts[self.username] = (self.password, self.id, self.total_wins, self.total_losses)
+        print("This is account info", Account.accounts[self.username])
 
 
 

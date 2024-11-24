@@ -19,7 +19,8 @@ class CPU(Player):
 
     # The CPU will make a random move based on available coordinates
     def make_move(self, grid):
-        """The CPU picks coordinates to attack randomly at first, and the CPU will target adjacent tiles if a hit is successful."""
+        """The CPU picks coordinates to attack randomly at first, and the CPU will target adjacent tiles
+        if a hit is successful."""
         print(f"Starting make_move. Targeting queue length: {len(self.targeting_queue)}") #DEBUG
         # If last hit is succesful, use the targeting queue
         if self.targeting_queue:

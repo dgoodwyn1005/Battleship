@@ -5,11 +5,13 @@ import Button as B
 import os
 import json
 import Board as BG
+import Account as A
+import AccountDisplay as AD
 
 
 class LoadGameDisplay(D.Display):
 
-    def __init__(self, username):
+    def __init__(self, username, user=None):
         super().__init__(screenName=C.LOAD_GAME_CAPTION, background=C.BLUE)
         self.load_game_button = B.Button(C.LOAD_SAVED_BUTTON_X + C.LOAD_SAVED_BUTTON_Y, C.LOAD_Y, C.LOAD_WIDTH,
                                          C.LOAD_HEIGHT, C.LOAD_TEXT, C.FONT, C.GREY, C.WHITE_FONT_COLOR)
@@ -21,8 +23,10 @@ class LoadGameDisplay(D.Display):
         self.folder_path = C.GAME_FOLDER + self.username
         self.created_buttons = False
         self.screen_buttons = [self.back_button, self.load_game_button]
+        self.total_files = 0
         self.total_background_height = 0
-        self.board = BG.BattleScreen()
+        self.user = user
+        self.board = BG.BattleScreen(user=self.user)
 
     def create_buttons(self):
         self.screen.fill(C.BLUE)
@@ -35,7 +39,8 @@ class LoadGameDisplay(D.Display):
                                                             self.folder_path)) * C.LOAD_HEIGHT))
             # Get the path to the saved games folder based on the current username
             files = os.listdir(self.folder_path)
-            self.total_background_height = len(files) * C.LOAD_HEIGHT
+            self.total_files = len(files)
+            self.total_background_height = self.total_files * C.LOAD_HEIGHT
             # Create a button for each file in the saved games folder
             for file in files:
                 file_button = B.Button(C.LOAD_X, C.FILE_BUTTON_Y + C.LOAD_HEIGHT, C.LOAD_WIDTH, C.LOAD_HEIGHT,
@@ -87,10 +92,14 @@ class LoadGameDisplay(D.Display):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.back_button.is_clicked():
                         self.running = False
+                        person = A.Account(self.username, self.user.password)
+                        account_screen = AD.AccountDisplay(person)
+                        account_screen.startDisplay(account_screen.main_loop)
             # Draw a background for the file buttons
-            pygame.draw.rect(self.screen, C.DARK_GREY,
-                             (C.LOAD_X - 10, C.FILE_BUTTON_Y - 80, C.LOAD_WIDTH + 20,
-                              self.total_background_height + 40))
+            if self.total_files > 0:
+                pygame.draw.rect(self.screen, C.DARK_GREY,
+                                 (C.LOAD_X - 10, C.FILE_BUTTON_Y - 80, C.LOAD_WIDTH + 20,
+                                  self.total_background_height + 40))
             # Switch to hover colors for the buttons if the cursor is over them
             for button in self.screen_buttons:
                 if button.is_hovered():
