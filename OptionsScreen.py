@@ -1,3 +1,4 @@
+import os
 import json
 import pygame.display
 import Display as D
@@ -93,8 +94,11 @@ class Options_Screen(D.Display):
 
     def save_game(self, save_name):
         """Save the game settings to a file"""
+        if not os.path.exists(C.GAME_FOLDER + self.username):   # Check if the user has a folder
+            os.makedirs(C.GAME_FOLDER + self.username)  # Create a folder for the user if there isn't one
+        save_location = C.GAME_FOLDER + self.username + "/"
         if self.player_grid != None and self.player_ships[4].head_coordinate != (-1, -1) and self.signed_in != False:
-            with open(C.GAME_FOLDER + save_name, "w") as file:
+            with open(save_location + save_name, "w") as file:
                 data = {}
                 data["player_grid"] = self.player_grid
                 data["opponent_grid"] = self.opponent_grid

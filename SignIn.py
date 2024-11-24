@@ -21,6 +21,8 @@ class SignInDisplay(D.Display):
         self.account_label = C.FONT.render(C.ACCOUNT_TEXT, True, C.WHITE_FONT_COLOR)  # Create the account label
         self.register_button = B.Button(C.REGISTER_X, C.REGISTER_Y, C.REGISTER_WIDTH, C.REGISTER_HEIGHT,
                                         C.REGISTER_TEXT, C.FONT, C.GREY, C.WHITE_FONT_COLOR)
+        self.back_button = B.Button(C.BACK_X, C.BACK_Y, C.BACK_WIDTH_HEIGHT, C.BACK_WIDTH_HEIGHT, C.BACK_TEXT, C.FONT,
+                                    C.GREY, C.WHITE_FONT_COLOR)
 
 
     def draw_buttons_and_text(self):
@@ -30,6 +32,7 @@ class SignInDisplay(D.Display):
         self.password_text.draw(self.screen)
         self.sign_in_button.draw(self.screen)
         self.register_button.draw(self.screen)
+        self.back_button.draw(self.screen)
         # The labels that are drawn on the screen
         username_label = C.FONT.render(C.USERNAME_TEXT, True, C.WHITE_FONT_COLOR)  # Create the username label
         password_label = C.FONT.render(C.PASSWORD_TEXT, True, C.WHITE_FONT_COLOR)  # Create the password label
@@ -95,7 +98,9 @@ class SignInDisplay(D.Display):
                         self.account_label = C.FONT.render("Account created", True, C.WHITE_FONT_COLOR)
                     else:
                         self.account_label = C.FONT.render("Account already exists", True, C.WHITE_FONT_COLOR)
-
+                if self.back_button.is_clicked():
+                    self.running = False
+                    self.screen.fill(C.LIGHTER_BLUE_COLOR)
         self.draw_buttons_and_text()
 
 
