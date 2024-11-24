@@ -9,7 +9,6 @@ import Ships
 from textbox import TextBox
 
 
-
 class Options_Screen(D.Display):
 
     play_music = True
@@ -41,7 +40,6 @@ class Options_Screen(D.Display):
         self.signed_in = signed_in
         self.username = username
 
-
     def draw_buttons_and_settings(self):
         # Draw buttons
         self.screen.fill(C.BLUE)
@@ -72,20 +70,19 @@ class Options_Screen(D.Display):
         self.filename_textbox.draw(self.screen)
         self.screen.blit(self.message_label, (C.FILENAME_X, C.FILENAME_Y - C.SAVE_MESSAGE_OFFSET))
 
-        self.game_display.draw_settings("On" if Options_Screen.play_music else "Off",
-                                        "On" if Options_Screen.play_sound_effects else "Off")
-        pygame.display.flip()
+        self.game_display.draw_settings("On" if self.sounds.play_music else "Off",
+                                        "On" if self.sounds.play_sound_effects else "Off")
+
 
 
     def toggle_music(self):
         """Toggle the music on and off"""
-        Options_Screen.play_music = not Options_Screen.play_music
+        self.sounds.toggle_music(not self.sounds.play_music)
         self.draw_buttons_and_settings()
-
 
     def toggle_sound_effects(self):
         """Toggle the sound effects on and off"""
-        Options_Screen.play_sound_effects = not Options_Screen.play_sound_effects
+        self.sounds.toggle_sounds(not self.sounds.play_sound_effects)
         self.draw_buttons_and_settings()
 
     def go_back(self):
