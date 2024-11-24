@@ -109,11 +109,12 @@ class BattleScreen(D.Display):
     # Main Game Loop
     def main_loop(self):
         pygame.display.flip()
-        self.create_grid() # Draw the grid on the screen
+        self.create_grid()  # Draw the grid on the screen
         self.draw_preview_ship() # Draw the ship on the screen
         if not self.loaded_game:    # If the game is not loaded, place CPU ships
             self.cpu_place_ships()         # Place CPU ships on the grid
         else:       # Redraw the loaded game
+            self.redraw_ships()
             self.redraw_loaded_game(self.grid, C.X_OFFSET, C.Y_OFFSET, self.button_list, True)
             self.redraw_loaded_game(self.opponent_grid, C.OPPONENT_X_OFFSET, C.OPPONENT_Y_OFFSET,
                                     self.opponent_button_list, False)
