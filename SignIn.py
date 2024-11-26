@@ -91,13 +91,18 @@ class SignInDisplay(D.Display):
                         self.account_label = C.FONT.render("Account not verified", True, C.WHITE_FONT_COLOR)
                         print("Account not verified")   # Used for testing purposes
                 if self.register_button.is_clicked():
-                    verify = A.Account.log_in(self.username_text.text, self.password_text.text)
-                    if not verify:
-                        new_user = A.Account(self.username_text.text, self.password_text.text)
-                        new_user.create_account()
-                        self.account_label = C.FONT.render("Account created", True, C.WHITE_FONT_COLOR)
+                    username = self.username_text.text
+                    password = self.password_text.text
+                    if username == "" or password == "":
+                        self.account_label = C.FONT.render("Please enter a username and password", True, C.WHITE_FONT_COLOR)
                     else:
-                        self.account_label = C.FONT.render("Account already exists", True, C.WHITE_FONT_COLOR)
+                        verify = A.Account.log_in(username, password)
+                        if not verify:
+                            new_user = A.Account(username, password)
+                            new_user.create_account()
+                            self.account_label = C.FONT.render("Account created", True, C.WHITE_FONT_COLOR)
+                        else:
+                            self.account_label = C.FONT.render("Account already exists", True, C.WHITE_FONT_COLOR)
                 if self.back_button.is_clicked():
                     self.running = False
                     self.screen.fill(C.LIGHTER_BLUE_COLOR)
