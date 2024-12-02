@@ -18,11 +18,13 @@ class LoadGameDisplay(D.Display):
         self.back_button = B.Button(C.BACK_X, C.BACK_Y, C.BACK_WIDTH_HEIGHT, C.BACK_WIDTH_HEIGHT, C.BACK_TEXT, C.FONT,
                                     C.GREY, C.WHITE_FONT_COLOR)
         self.message_label = C.FONT.render("Select a game file to load:", True, C.WHITE_FONT_COLOR)
+        self.delete_button = B.Button(C.DELETE_X, C.DELETE_Y, C.DELETE_WIDTH, C.DELETE_HEIGHT, C.DELETE_TEXT, C.FONT,
+                                      C.GREY, C.WHITE_FONT_COLOR)
         self.selected_file = ""
         self.username = username
         self.folder_path = C.GAME_FOLDER + self.username
         self.created_buttons = False
-        self.screen_buttons = [self.back_button, self.load_game_button]
+        self.screen_buttons = [self.back_button, self.load_game_button, self.delete_button]
         self.total_files = 0
         self.total_background_height = 0
         self.user = user
@@ -107,7 +109,8 @@ class LoadGameDisplay(D.Display):
                 else:
                     button.color = C.GREY
                 # Handle when only the file buttons are clicked
-                if button.is_clicked() and button != self.load_game_button and button != self.back_button:
+                if (button.is_clicked() and button != self.load_game_button and button != self.back_button and
+                        button != self.delete_button):
                     self.selected_file = button.text
                     self.message_label = C.FONT.render("The current selected game file is: " + self.selected_file,
                                                        True, C.WHITE_FONT_COLOR)
@@ -117,6 +120,14 @@ class LoadGameDisplay(D.Display):
                         self.load_game(self.selected_file + ".json")
                     else:
                         self.message_label = C.FONT.render("Please select a file to load", True, C.RED)
+                # Handle when the delete button is clicked
+                elif button.is_clicked() and button == self.delete_button:
+                    if self.selected_file != "":
+                        os.remove(self.folder_path + "/" + self.selected_file + ".json")
+                        self.message_label = C.FONT.render("File deleted successfully", True, C.WHITE_FONT_COLOR)
+                        self.selected_file = ""
+                    else:
+                        self.message_label = C.FONT.render("Please select a file to delete", True, C.RED)
                 # Draw the buttons
                 button.draw(self.screen)
             # Draw the message label

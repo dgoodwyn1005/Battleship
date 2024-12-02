@@ -25,6 +25,7 @@ class SignInDisplay(D.Display):
                                     C.GREY, C.WHITE_FONT_COLOR)
 
 
+
     def draw_buttons_and_text(self):
         self.screen.fill(C.BLUE)  # Fill the screen with the background color, so it doesn't show the previous screen
         # Draw the screen buttons
