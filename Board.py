@@ -32,8 +32,7 @@ class BattleScreen(D.Display):
 
         # Load Game Assets
 
-        # self.sounds = SM.Sound()    # This is the reason for the black screen. The sound is not being loaded properly
-
+        self.sounds = SM.Sound()
 
         # Load Grid and Water Tiles
         grid_tile = pygame.image.load(C.IMAGE_FOLDER + "/grid.png")
@@ -45,8 +44,8 @@ class BattleScreen(D.Display):
         self.opponent_button_list = []
 
         # Load and Scale Explosion and Water images
-        self.explosion = pygame.image.load(C.IMAGE_FOLDER + "/explosion.jpg")
-        self.water_ripple = pygame.image.load(C.IMAGE_FOLDER + "/ripple.jpg")
+        self.explosion = pygame.image.load(C.IMAGE_FOLDER + "/explosion.png")
+        self.water_ripple = pygame.image.load(C.IMAGE_FOLDER + "/ripple.png")
         self.explosion = pygame.transform.scale(self.explosion, (C.TILE_WIDTH, C.TILE_HEIGHT))
         self.water_ripple = pygame.transform.scale(self.water_ripple, (C.TILE_WIDTH, C.TILE_HEIGHT))
         self.opponent_attacks = set()
@@ -89,6 +88,8 @@ class BattleScreen(D.Display):
     def check_win_condition(self):
         """Check if the game has been won"""
         if self.player_ships_remaining == 0:
+            self.sounds.stop_song("conflict")
+            self.sounds.play_song("lose")
             self.message = "CPU Wins!"
             self.game_display.draw_message(self.message)
             pygame.display.flip()
@@ -96,9 +97,11 @@ class BattleScreen(D.Display):
             if self.signed_in:
                 self.user.update_win_loss(False)
                 print("Wins updated")
-            pygame.time.delay(8000)
+            pygame.time.delay(10000)
             self.running = False
         elif self.cpu_ships_remaining == 0:
+            self.sounds.stop_song("conflict")
+            self.sounds.play_song("victory")
             self.message = "{} Wins!".format(self.username)
             self.game_display.draw_message(self.message)
             pygame.display.flip()
@@ -106,7 +109,7 @@ class BattleScreen(D.Display):
                 self.user.update_win_loss(True)
                 print("Wins updated")
             self.game_over = True
-            pygame.time.delay(8000)
+            pygame.time.delay(10000)
             self.running = False
 
     # Main Game Loop
@@ -122,7 +125,7 @@ class BattleScreen(D.Display):
             self.redraw_loaded_game(self.opponent_grid, C.OPPONENT_X_OFFSET, C.OPPONENT_Y_OFFSET,
                                     self.opponent_button_list, False)
 
-        # self.sounds.play_song("conflict")
+        self.sounds.play_song("conflict")
 
 
 
@@ -137,6 +140,7 @@ class BattleScreen(D.Display):
                     self.running = False
                 # Check if it is clicked
                 if self.pause_button.is_clicked():
+                    self.sounds.play_sound("click")
                     # Pass the grids and current turn to the Options Screen in case the user wants to save the game
                     op_screen = OS.Options_Screen(self.grid.grid, self.opponent_grid.grid, self.player_turn,
                                                   self.ships, self.opponent_ships)
@@ -150,8 +154,9 @@ class BattleScreen(D.Display):
                     self.redraw_attacks(self.my_attacks)    # Redraw the attacks on the opponent grid
                     self.redraw_attacks(self.opponent_attacks)  # Redraw the attacks on the player grid
                     self.redraw_sunken_ships()              # Redraw the sunken ships
-                    # self.sounds.stop_song("conflict")
+                    self.sounds.stop_song("conflict")
                 if self.rotate_button.is_clicked():     # Rotate the ship if the rotate button is clicked
+                    self.sounds.play_sound("click")
                     self.ship_preview.rotated = not self.ship_preview.rotated
                     self.draw_preview_ship()
 
@@ -285,12 +290,12 @@ class BattleScreen(D.Display):
                 self.show_sunken_ship(self.opponent_ships[5 - result])
                 self.cpu_ships_remaining -= 1  # Decrement the CPU's remaining ships
             self.check_win_condition()  # Check if the game has been won
-            # self.sounds.play_sound("explosion")              # Need to fix sound module
+            self.sounds.play_sound("explosion")              # Need to fix sound module
         else:
             self.message = "{} missed.".format(self.username)  # Update message if player misses
             self.my_attacks.add((row, col, "miss"))  # Add x and y coordinates and miss to my_attacks
             self.screen.blit(self.water_ripple, (row, col))  # Draw water ripple
-            # self.sounds.play_sound("splash")
+            self.sounds.play_sound("splash")
         self.game_display.draw_message(self.message)        # Draws the result message on the screen
 
         self.player_turn = False  # End player turn
