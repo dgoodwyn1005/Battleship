@@ -6,8 +6,8 @@ import GameDisplay as GD
 import Board as BG
 import OptionsScreen as OS
 import SignIn as SI
+import SoundManager as SM
 from textbox import TextBox
-
 
 class Main_Menu(D.Display):
     def __init__(self):
@@ -26,6 +26,8 @@ class Main_Menu(D.Display):
         self.username = "Player 1"
         self.game_display = GD.GameDisplay(self.screen)
         self.draw_buttons_and_text()
+
+        self.sounds = SM.Sound()
 
     def draw_buttons_and_text(self):
         """Draws the buttons and text on the screen"""
@@ -76,6 +78,8 @@ class Main_Menu(D.Display):
 
     def main_loop(self):
 
+        self.sounds.play_song("menu")
+
         while self.running:
 
             for event in pygame.event.get():
@@ -94,20 +98,24 @@ class Main_Menu(D.Display):
                     # self.board.startDisplay(self.board.main_loop)
                     battle_screen = BG.BattleScreen(username=self.username)
                     battle_screen.startDisplay(battle_screen.main_loop)
-
+                    self.sounds.play_sound("click")
 
                 if self.options_button.is_clicked():
+                    self.sounds.play_sound("click")
                   # Transition to options screen
                     screen = OS.Options_Screen()
                     screen.startDisplay(screen.main_loop)
 
                 if self.account_button.is_clicked():
+                    self.sounds.play_sound("click")
                     # Transition to account screen
                     login_screen = SI.SignInDisplay()
                     login_screen.startDisplay(login_screen.main_loop)
 
                 if self.quit_button.is_clicked():
+                    self.sounds.play_sound("click")
                     print("Quit Game")
+                    self.sounds.stop_song("menu")
                     self.running = False
             self.screen.fill(C.BLUE)
             self.draw_buttons_and_text()

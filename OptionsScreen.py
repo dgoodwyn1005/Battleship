@@ -6,8 +6,8 @@ import Constants as C
 import Button as B
 import GameDisplay as GD
 import Ships
+import SoundManager as SM
 from textbox import TextBox
-
 
 class Options_Screen(D.Display):
 
@@ -18,6 +18,7 @@ class Options_Screen(D.Display):
     def __init__(self, player_grid = None, opponent_grid = None, current_turn = None, player_ships: [Ships.Ships] = None,
                  opponent_ships: [Ships.Ships] = None, signed_in=False, username=None):
         super().__init__(screenName= C.OPTIONS_CAPTION, background= C.BLUE)
+        self.sounds = SM.Sound()
         self.music_button = B.Button(C.MUSIC_X, C.MUSIC_Y, C.MUSIC_WIDTH, C.MUSIC_HEIGHT, C.MUSIC_TEXT,
                                      C.FONT, C.GREY, C.WHITE_FONT_COLOR)
         self.sounds_button = B.Button(C.SOUNDS_X, C.SOUNDS_Y, C.SOUNDS_WIDTH, C.SOUNDS_HEIGHT, C.SOUNDS_TEXT,
@@ -25,12 +26,11 @@ class Options_Screen(D.Display):
         self.back_button = B.Button(C.BACK_X, C.BACK_Y, C.BACK_WIDTH_HEIGHT, C.BACK_WIDTH_HEIGHT, C.BACK_TEXT,
                                     C.FONT, C.GREY, C.WHITE_FONT_COLOR)
         self.game_display = GD.GameDisplay(self.screen)
-        self.explosion_sound = pygame.mixer.Sound(C.AUDIO_FOLDER + "/explosion_sound.wav")
-        self.water_sound = pygame.mixer.Sound(C.AUDIO_FOLDER + "/water_splash_sound.wav")
         self.save_button = B.Button(C.SAVE_X, C.SAVE_Y, C.SAVE_WIDTH, C.SAVE_HEIGHT, C.SAVE_TEXT, C.FONT, C.GREY,
                                     C.WHITE_FONT_COLOR)
         self.filename_textbox = TextBox(C.FILENAME_X, C.FILENAME_Y, C.FILENAME_WIDTH, C.FILENAME_HEIGHT, C.FONT)
         self.message_label = C.FONT.render("", True, C.WHITE_FONT_COLOR)
+
         # Data used to save the game
         self.player_grid = player_grid
         self.opponent_grid = opponent_grid
@@ -68,16 +68,22 @@ class Options_Screen(D.Display):
         self.save_button.draw(self.screen)
         self.back_button.draw(self.screen)
         self.filename_textbox.draw(self.screen)
-        self.screen.blit(self.message_label, (C.FILENAME_X, C.FILENAME_Y - C.SAVE_MESSAGE_OFFSET))
+
+        #REMEMBER THIS
+        #self.screen.blit(self.message_label, (C.FILENAME_X, C.FILENAME_Y - C.SAVE_MESSAGE_OFFSET))
+        self.screen.blit(self.message_label, (C.FILENAME_X, C.FILENAME_Y))
 
         self.game_display.draw_settings("On" if self.sounds.play_music else "Off",
                                         "On" if self.sounds.play_sound_effects else "Off")
 
 
-
     def toggle_music(self):
         """Toggle the music on and off"""
         self.sounds.toggle_music(not self.sounds.play_music)
+        if self.sounds.play_music:
+            self.sounds.play_song("menu")
+        else:
+            self.sounds.stop_song("menu")
         self.draw_buttons_and_settings()
 
     def toggle_sound_effects(self):
@@ -134,10 +140,13 @@ class Options_Screen(D.Display):
                 self.filename_textbox.handle_event(event)
                 # Mouse button ensures only one click is registered
                 if self.music_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
+                    self.sounds.play_sound("click")
                     self.toggle_music()
                 elif self.sounds_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
+                    self.sounds.play_sound("click")
                     self.toggle_sound_effects()
                 elif self.save_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
+                    self.sounds.play_sound("click")
                     # Check if the entered name is acceptable
                     filename = self.filename_textbox.text
                     if not self.signed_in:
@@ -151,8 +160,10 @@ class Options_Screen(D.Display):
                     else:
                         self.message_label = C.FONT.render("Invalid file name", True, C.RED)
                 elif self.back_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
+                    self.sounds.play_sound("click")
                     self.go_back()
             self.draw_buttons_and_settings()
+            pygame.display.flip()
 
 
 if __name__ == "__main__":
