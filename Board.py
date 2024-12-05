@@ -29,6 +29,8 @@ class BattleScreen(D.Display):
                                      C.PAUSE_TEXT, C.FONT, C.GREY, C.WHITE_FONT_COLOR)
         self.rotate_button = B.Button(C.ROTATE_X, C.ROTATE_Y, C.ROTATE_WIDTH_HEIGHT, C.ROTATE_WIDTH_HEIGHT,
                                       C.ROTATE_TEXT, C.FONT, C.GREY, C.WHITE_FONT_COLOR)
+        self.exit_button = B.Button(C.EXIT_X, C.EXIT_Y, C.EXIT_WIDTH, C.EXIT_HEIGHT, C.EXIT_TEXT, C.FONT, C.GREY,
+                                    C.WHITE_FONT_COLOR)
 
         # Load Game Assets
 
@@ -94,11 +96,12 @@ class BattleScreen(D.Display):
             self.game_display.draw_message(self.message)
             pygame.display.flip()
             self.game_over = True
+            self.exit_button.draw(self.screen)
             if self.signed_in:
                 self.user.update_win_loss(False)
                 print("Wins updated")
-            pygame.time.delay(10000)
-            self.running = False
+            pygame.time.delay(5000)
+            #self.running = False
         elif self.cpu_ships_remaining == 0:
             self.sounds.stop_song("conflict")
             self.sounds.play_song("victory")
@@ -109,8 +112,9 @@ class BattleScreen(D.Display):
                 self.user.update_win_loss(True)
                 print("Wins updated")
             self.game_over = True
-            pygame.time.delay(10000)
-            self.running = False
+            self.exit_button.draw(self.screen)
+            pygame.time.delay(5000)
+            #self.running = False
 
     # Main Game Loop
     def main_loop(self):
@@ -130,8 +134,8 @@ class BattleScreen(D.Display):
 
 
         while self.running:
-            if self.game_over:
-                self.running = False
+            #if self.game_over:
+                #self.running = False
 
                 
             for event in pygame.event.get():
@@ -139,6 +143,9 @@ class BattleScreen(D.Display):
                 if event.type == pygame.QUIT:
                     self.running = False
                 # Check if it is clicked
+                if self.exit_button.is_clicked():
+                    self.running = False
+
                 if self.pause_button.is_clicked():
                     self.sounds.play_sound("click")
                     # Pass the grids and current turn to the Options Screen in case the user wants to save the game
@@ -231,24 +238,26 @@ class BattleScreen(D.Display):
                         self.turn_message = "CPU"
 
                     # Check if the player has clicked on the opponent grid after ships have been placed
-                    if self.player_turn and not self.placeShips:
-                        for opponent_button in self.opponent_button_list:
-                            if (opponent_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN and not
-                            opponent_button.disabled):
-                                row = (opponent_button.x - C.OPPONENT_X_OFFSET) // C.TILE_WIDTH
-                                col = (opponent_button.y - C.OPPONENT_Y_OFFSET) // C.TILE_HEIGHT
-                                self.player_turn_action(row, col)
-                                opponent_button.disabled = True     # Disable the button after it has been clicked
-                                self.turn_message = "CPU"
-                                self.game_display.draw_turn_indicator(self.turn_message)
-                                pygame.display.flip()
+                    if not self.game_over:
+                        if self.player_turn and not self.placeShips:
+                            for opponent_button in self.opponent_button_list:
+                                if (opponent_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN and not
+                                opponent_button.disabled):
+                                    row = (opponent_button.x - C.OPPONENT_X_OFFSET) // C.TILE_WIDTH
+                                    col = (opponent_button.y - C.OPPONENT_Y_OFFSET) // C.TILE_HEIGHT
+                                    self.player_turn_action(row, col)
+                                    opponent_button.disabled = True     # Disable the button after it has been clicked
+                                    self.turn_message = "CPU"
+                                    self.game_display.draw_turn_indicator(self.turn_message)
+                                    pygame.display.flip()
                 # CPU turn begins after all ships have been placed and player has attacked
-                if not self.player_turn and not self.placeShips:
-                    # CPU can start making moves
-                    self.cpu_turn()
-                    self.turn_message = self.username
-                    self.game_display.draw_turn_indicator(self.turn_message)
-                    pygame.display.flip()
+                if not self.game_over:
+                    if not self.player_turn and not self.placeShips:
+                        # CPU can start making moves
+                        self.cpu_turn()
+                        self.turn_message = self.username
+                        self.game_display.draw_turn_indicator(self.turn_message)
+                        pygame.display.flip()
             # Check if the pause button is hovered and change color accordingly
             if self.pause_button.is_hovered():
                 self.pause_button.color = C.HOVER_COLOR
@@ -264,9 +273,17 @@ class BattleScreen(D.Display):
             else:
                 self.rotate_button.color = C.GREY
 
-            # Redraw the pause button and rotate button with the updated color
+            # Check if the exit button is hovered and change color accordingly
+            if self.exit_button.is_hovered():
+                self.exit_button.color = C.HOVER_COLOR
+            else:
+                self.exit_button.color = C.GREY
+
+            # Redraw the pause button and rotate button and exit button with the updated color
             self.pause_button.draw(self.screen)
             self.rotate_button.draw(self.screen)
+            if self.game_over:
+                self.exit_button.draw(self.screen)
             self.game_display.draw_turn_indicator(self.turn_message)
 
             self.pause_button.draw(self.screen)
@@ -410,6 +427,10 @@ class BattleScreen(D.Display):
 
         # Draw the message on the screen
         self.game_display.draw_message(self.message)
+
+        # Draw the exit button
+        if self.game_over:
+            self.exit_button.draw(self.screen)
 
         pygame.display.flip()
 
