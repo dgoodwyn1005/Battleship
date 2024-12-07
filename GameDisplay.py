@@ -37,12 +37,9 @@ class GameDisplay(object):
         text_rect = message_text.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 15))
         self.screen.blit(message_text, text_rect)
 
-
     # Draw the settings buttons on the options screen
     def draw_settings(self, music, sounds):
         music_text = self.font.render(f"Music: {music}", True, C.WHITE_FONT_COLOR)
         sounds_text = self.font.render(f"Sounds: {sounds}", True, C.WHITE_FONT_COLOR)
         self.screen.blit(music_text, (self.screen.get_width() // 2 - 35, 50))
         self.screen.blit(sounds_text, (self.screen.get_width() // 2 - 35, 30))
-
-

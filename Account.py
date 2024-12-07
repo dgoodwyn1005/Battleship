@@ -1,5 +1,8 @@
 import os
 import json
+import Constants as C
+
+
 # Current Environment
 Environment = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
@@ -12,7 +15,7 @@ class Account(object):
     def __init__(self, username, password):
         self.username = username
         self.password = password
-        self.account_open = False
+        self.account_open = True
         self.total_wins = 0
         self.total_losses = 0
         self.id = 0
@@ -25,10 +28,8 @@ class Account(object):
         """Checks if the account exists first in the accounts dictionary before creating an instance of Account"""
         cls.load_data()
         if username in Account.accounts and Account.accounts[username][0] == password:
-            print("Logged in")      # Used for testing purposes
             return True
         else:
-            print("Wrong Username & Password")  # Used for testing purposes
             # self.account_open = False
             return False
 
@@ -40,7 +41,6 @@ class Account(object):
         """Resets the password of the current account"""
         if self.account_open:
             self.password = new_pass
-
 
     @classmethod
     def load_data(cls): #Loads all accounts
@@ -62,7 +62,6 @@ class Account(object):
         # Update the account dictionary with the new win and loss
         with open(SAVED_ACCOUNT_DOCUMENT, 'r') as file:
             data = json.load(file)
-
         for account in data['accounts'].values():
             if account['username'] == self.username:
                 account['wins'] = self.total_wins
@@ -70,8 +69,15 @@ class Account(object):
         with open(SAVED_ACCOUNT_DOCUMENT, 'w') as file:
             json.dump(data, file, indent=4)
         Account.accounts[self.username] = (self.password, self.id, self.total_wins, self.total_losses)
-        print("This is account info", Account.accounts[self.username])
 
+    def delete_game(self, game_name):
+        """Delete a saved game"""
+        if self.account_open:
+            file_path = C.GAME_FOLDER + self.username + "/" + game_name + ".json"
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                return True
+        return False
 
 
     def create_account(self): #Adds new account to files
@@ -82,10 +88,8 @@ class Account(object):
                        "losses": details[3]} for username, details in Account.accounts.items()}}, file, indent=4)
 
 
-
 if __name__ == "__main__":
     test = Account.log_in("testuser", "testpassword")
     if test:
         user = Account("testuser", "testpassword")
-        print(user.username)
     Account.log_in("sydney", "mypassword")

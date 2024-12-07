@@ -28,62 +28,65 @@ class LoadGameDisplay(D.Display):
         self.total_files = 0
         self.total_background_height = 0
         self.user = user
-        self.board = BG.BattleScreen(user=self.user)
 
     def create_buttons(self):
         self.screen.fill(C.BLUE)
+        file_y = C.FILE_BUTTON_Y
         # Draw background rectangle behind the file buttons
-        if not os.path.exists(self.folder_path):
+        if not os.path.exists(self.folder_path):  # Check if the folder exists
+            # Display message if no files are found
             self.message_label = C.FONT.render("No saved games found", True, C.RED)
+            # Otherwise, show the saved game files store in the file location
         else:
-            pygame.draw.rect(self.screen, C.DARK_GREY, (C.LOAD_X - 10, C.FILE_BUTTON_Y - 10, C.LOAD_WIDTH + 20,
-                                                        C.FILE_BUTTON_Y + len(os.listdir(
-                                                            self.folder_path)) * C.LOAD_HEIGHT))
+            # Create a background box for the file buttons
             # Get the path to the saved games folder based on the current username
             files = os.listdir(self.folder_path)
             self.total_files = len(files)
-            self.total_background_height = self.total_files * C.LOAD_HEIGHT
             # Create a button for each file in the saved games folder
             for file in files:
-                file_button = B.Button(C.LOAD_X, C.FILE_BUTTON_Y + C.LOAD_HEIGHT, C.LOAD_WIDTH, C.LOAD_HEIGHT,
+                file_button = B.Button(C.FILE_BUTTON_X, file_y + C.FILE_BUTTON_HEIGHT, C.FILE_BUTTON_WIDTH, C.FILE_BUTTON_HEIGHT,
                                        file.split('.')[0], C.FONT, C.GREY, C.WHITE_FONT_COLOR)
                 self.screen_buttons.append(file_button)     # Add the button to the list of screen buttons
-                C.FILE_BUTTON_Y += C.FILE_Y_OFFSET      # Increment the y position of the next button
+                file_y += C.FILE_Y_OFFSET      # Increment the y position of the next button
 
     def load_game(self, save_name):
         """Load the game from a saved file"""
+        board = BG.BattleScreen(user=self.user, game_name=save_name, username=self.username)
         with open(self.folder_path + "/" + save_name, "r") as file:
             data = json.load(file)
-            self.board.grid.grid = data["player_grid"]
-            self.board.opponent_grid.grid = data["opponent_grid"]
+            board.grid.grid = data["player_grid"]
+            board.opponent_grid.grid = data["opponent_grid"]
             if data["current_turn"] == "Player 1":
-                self.board.player_turn = data["current_turn"]
+                board.player_turn = data["current_turn"]
             else:
-                self.board.player_turn = not data["current_turn"]
+                board.player_turn = not data["current_turn"]
             count = 0
             for key in data.keys():
+                print(key)
                 if key.startswith("my_") or key.startswith("opp_"):  # To avoid the grid data and current turn data
                     if count == 5:
                         count = 0  # Reset the count to 0 after going through the first 5 ships
                     if key.startswith("my_"):  # Handles players ships only
-                        ship_list = self.board.ships  # Assign the player ships list
+                        ship_list = board.ships  # Assign the player ships list
                     else:
-                        ship_list = self.board.opponent_ships  # Assign the opponent ships list
+                        ship_list = board.opponent_ships  # Assign the opponent ships list
                     ship = ship_list[count]  # Iterate through the ship list
                     ship.head_coordinate = data[key][0]  # Add the head coordinates to each ship
                     ship.rotated = data[key][1]  # Add the direction of the ship
                     ship.sunken = data[key][2]  # Add the sunken status of the ship
                     ship.hit_count = data[key][3]  # Add the hit count of the ship
+                    print(ship.name, ship.head_coordinate, ship.rotated, ship.sunken, ship.hit_count)
                     count += 1
-            self.board.ship_count = 5
-            self.board.startedBoard = True
-            self.board.placeShips = False
-            self.board.loaded_game = True
-            self.board.rotate_button.disabled = True
-            self.board.message = "Game loaded successfully"
+            board.ship_count = 5
+            board.startedBoard = True
+            board.placeShips = False
+            board.loaded_game = True
+            board.signed_in = True
+            board.rotate_button.disabled = True
+            board.message = "Game loaded successfully"
             self.screen.fill(C.LIGHTER_BLUE_COLOR)
             self.running = False  # Stop the account screen
-            self.board.startDisplay(self.board.main_loop)  # Start the game screen
+            board.startDisplay(board.main_loop)  # Start the game screen
 
     def main_loop(self):
         self.create_buttons()  # Create the buttons for the saved games
@@ -99,9 +102,12 @@ class LoadGameDisplay(D.Display):
                         account_screen.startDisplay(account_screen.main_loop)
             # Draw a background for the file buttons
             if self.total_files > 0:
-                pygame.draw.rect(self.screen, C.DARK_GREY,
-                                 (C.LOAD_X - 10, C.FILE_BUTTON_Y - 80, C.LOAD_WIDTH + 20,
-                                  self.total_background_height + 40))
+                initial_file_button_y = C.FILE_BUTTON_Y
+                self.total_background_height = self.total_files * C.FILE_BUTTON_HEIGHT + (
+                        self.total_files - 1) * C.FILE_Y_OFFSET
+                pygame.draw.rect(self.screen, C.DARK_GREY, (
+                    C.FILE_BUTTON_X - 10, initial_file_button_y + 20, C.FILE_BUTTON_WIDTH + 20,
+                    self.total_background_height))
             # Switch to hover colors for the buttons if the cursor is over them
             for button in self.screen_buttons:
                 if button.is_hovered():
@@ -121,11 +127,18 @@ class LoadGameDisplay(D.Display):
                     else:
                         self.message_label = C.FONT.render("Please select a file to load", True, C.RED)
                 # Handle when the delete button is clicked
-                elif button.is_clicked() and button == self.delete_button:
+                elif (button.is_clicked() and button == self.delete_button and event.type == pygame.MOUSEBUTTONDOWN
+                      and self.user != None):
                     if self.selected_file != "":
-                        os.remove(self.folder_path + "/" + self.selected_file + ".json")
-                        self.message_label = C.FONT.render("File deleted successfully", True, C.WHITE_FONT_COLOR)
-                        self.selected_file = ""
+                        deleted = self.user.delete_game(self.selected_file)
+                        if deleted:
+                            self.message_label = C.FONT.render("File deleted successfully", True, C.WHITE_FONT_COLOR)
+                            self.screen_buttons = [btn for btn in self.screen_buttons if btn != self.selected_file]
+                            self.selected_file = ""
+                        elif deleted == False:
+                            self.message_label = C.FONT.render("File already deleted", True, C.RED)
+                        else:
+                            self.message_label = C.FONT.render("You must be signed in to delete a game", True, C.RED)
                     else:
                         self.message_label = C.FONT.render("Please select a file to delete", True, C.RED)
                 # Draw the buttons
