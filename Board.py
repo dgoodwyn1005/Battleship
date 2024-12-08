@@ -1,6 +1,8 @@
 import random
 import pygame
 import pygame.image
+import time
+
 import Constants as C
 import Display as D
 import GameGrid as GG
@@ -110,8 +112,8 @@ class BattleScreen(D.Display):
             self.game_over = True
             self.exit_button.draw(self.screen)
             pygame.time.delay(5000)
-            # self.running = False
 
+            
     # Main Game Loop
     def main_loop(self):
         pygame.display.flip()
@@ -144,7 +146,7 @@ class BattleScreen(D.Display):
                     self.sounds.play_sound("click")
                     # Pass the grids and current turn to the Options Screen in case the user wants to save the game
                     op_screen = OS.Options_Screen(self.grid.grid, self.opponent_grid.grid, self.player_turn,
-                                                  self.ships, self.opponent_ships, self.signed_in, self.username)
+                                                  self.ships, self.opponent_ships)
                     op_screen.startDisplay(op_screen.main_loop)
                     # Redraw Board screen after returning from the Pause Menu
                     self.screen.fill(C.LIGHTER_BLUE_COLOR)      # Fill screen with light blue color
@@ -253,9 +255,16 @@ class BattleScreen(D.Display):
                 self.rotate_button.text_color = C.LIGHTER_BLUE_COLOR
             else:
                 self.rotate_button.color = C.GREY
-            # Redraw the pause button and rotate button with the updated color
+            # Check if the exit button is hovered and change color accordingly
+            if self.exit_button.is_hovered():
+                self.exit_button.color = C.HOVER_COLOR
+            else:
+                self.exit_button.color = C.GREY
+            # Redraw the pause button and rotate button and exit button with the updated color
             self.pause_button.draw(self.screen)
             self.rotate_button.draw(self.screen)
+            if self.game_over:
+                self.exit_button.draw(self.screen)
             self.game_display.draw_turn_indicator(self.turn_message)
             self.pause_button.draw(self.screen)
             pygame.display.flip()
@@ -292,9 +301,7 @@ class BattleScreen(D.Display):
     # Handle CPU turn
     def cpu_turn(self):
         """CPU makes a move, and it displays on the 1st player's grid"""
-
         result = self.cpu_player.make_move(self.grid)  # CPU chooses a tile to attack
-
         row = result[1][0] * C.TILE_WIDTH + C.X_OFFSET  # Convert grid coordinates to screen coordinates
         col = result[1][1] * C.TILE_HEIGHT + C.Y_OFFSET
 
@@ -319,6 +326,7 @@ class BattleScreen(D.Display):
         self.turn_message = self.username
         pygame.display.flip()
         pygame.time.delay(300)
+
 
     def create_grid(self):
         """Draws both grids onto the screen, creates buttons for each tile, and them to a list"""
@@ -471,6 +479,7 @@ class BattleScreen(D.Display):
             if ship.sunken:           # If the ship is sunken, draw the sunken ship
                 self.show_sunken_ship(ship)
         pygame.display.flip()
+
 
     def redraw_loaded_game(self, grid: GG.GameGrid, x_offset, y_offset, button_list, cpu_player):
         """Redraw the loaded game on the screen"""
