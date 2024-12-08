@@ -3,8 +3,8 @@
         "0": {
             "username": "testuser",
             "password": "testpassword",
-            "wins": 5,
-            "losses": 2
+            "wins": 6,
+            "losses": 3
         },
         "1": {
             "username": "testuser2",
@@ -21,7 +21,7 @@
         "3": {
             "username": "iech",
             "password": "321",
-            "wins": 1,
+            "wins": 2,
             "losses": 0
         },
         "4": {
@@ -30,6 +30,5 @@
             "wins": 0,
             "losses": 0
         }
-
     }
 }

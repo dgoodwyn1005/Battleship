@@ -69,27 +69,25 @@ class Options_Screen(D.Display):
         self.back_button.draw(self.screen)
         self.filename_textbox.draw(self.screen)
 
-        #REMEMBER THIS
-        #self.screen.blit(self.message_label, (C.FILENAME_X, C.FILENAME_Y - C.SAVE_MESSAGE_OFFSET))
-        self.screen.blit(self.message_label, (C.FILENAME_X, C.FILENAME_Y))
-
-        self.game_display.draw_settings("On" if self.sounds.play_music else "Off",
-                                        "On" if self.sounds.play_sound_effects else "Off")
-
+        # Draw the message label on the screen
+        self.screen.blit(self.message_label, (C.FILENAME_X, C.FILENAME_Y - C.SAVE_MESSAGE_OFFSET))
+        # Draw the settings on the screen
+        self.game_display.draw_settings("On" if SM.Sound.play_music else "Off",
+                                        "On" if SM.Sound.play_sound_effects else "Off")
 
     def toggle_music(self):
         """Toggle the music on and off"""
-        self.sounds.toggle_music(not self.sounds.play_music)
-        if self.sounds.play_music:
+        self.sounds.toggle_music()     # Toggle the music using the SoundManager method
+        if self.sounds.play_music:      # If music is enabled, play the menu song
             self.sounds.play_song("menu")
-        else:
+        else:                        # Otherwise, stop the menu song
             self.sounds.stop_song("menu")
-        self.draw_buttons_and_settings()
+        self.draw_buttons_and_settings()    # Redraw the buttons and settings to show the updated On and Off options
 
     def toggle_sound_effects(self):
         """Toggle the sound effects on and off"""
-        self.sounds.toggle_sounds(not self.sounds.play_sound_effects)
-        self.draw_buttons_and_settings()
+        self.sounds.toggle_sounds()     # Toggle the sound effects using the SoundManager method
+        self.draw_buttons_and_settings()    # Redraw the buttons and settings to show the updated On and Off options
 
     def go_back(self):
         """When the back button is clicked, go back to the main menu"""
@@ -99,25 +97,25 @@ class Options_Screen(D.Display):
         """Save the game settings to a file"""
         if not os.path.exists(C.GAME_FOLDER + self.username):   # Check if the user has a folder
             os.makedirs(C.GAME_FOLDER + self.username)  # Create a folder for the user if there isn't one
-        save_location = C.GAME_FOLDER + self.username + "/"
+        save_location = C.GAME_FOLDER + self.username + "/"  # Set the save location to the user's folder
+        # Ensure that all ships have been placed and the player is signed in before attempting to save the game
         if self.player_grid != None and self.player_ships[4].head_coordinate != (-1, -1) and self.signed_in != False:
             with open(save_location + save_name, "w") as file:
-                data = {}
-                data["player_grid"] = self.player_grid
-                data["opponent_grid"] = self.opponent_grid
-                data["current_turn"] = self.current_turn
-                for ship in self.player_ships:
+                data = {"player_grid": self.player_grid, "opponent_grid": self.opponent_grid,
+                        "current_turn": self.current_turn}
+                # Save the head coordinates of the ships so that the images can be reloaded at the correct positions
+                for ship in self.player_ships:      # Save the player's ships together
                     data["my_" + ship.name] = (ship.head_coordinate, ship.rotated, ship.sunken, ship.hit_count)
-                for ship in self.opponent_ships:
+                for ship in self.opponent_ships:    # Save the opponent's ships together
                     data["opp_" + ship.name] = (ship.head_coordinate, ship.rotated, ship.sunken, ship.hit_count)
-                json.dump(data, file, indent=4)
+                json.dump(data, file, indent=4)     # Dump the data to the file
 
     def check_valid_name(self, name: str):
         """Check if the enter file name is valid"""
         if name == "":
             self.message_label = C.FONT.render("Please enter a file name", True, C.RED)
             return False
-        elif name.find(".") != -1:  # Check if the file name contains a '.'; otherise .find() returns -1
+        elif name.find(".") != -1:  # Check if the file name contains a '.'; otherwise .find() returns -1
             self.message_label = C.FONT.render("File name cannot contain '.'", True, C.RED)
             return False
         elif name.find("/") != -1:  # Check if the file name contains a '/'
