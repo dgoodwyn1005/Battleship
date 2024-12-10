@@ -114,7 +114,6 @@ class Main_Menu(D.Display):
 
                 if self.quit_button.is_clicked():
                     self.sounds.play_sound("click")
-                    print("Quit Game")
                     self.sounds.stop_song("menu")
                     self.running = False
             self.screen.fill(C.BLUE)

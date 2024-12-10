@@ -28,7 +28,6 @@ class TextBox(object):
         if event.type == pygame.KEYDOWN and self.active:
             if event.key == pygame.K_RETURN:
                 username = self.text
-                print(f"Username entered: {username}")  # Do something with this text
             elif event.key == pygame.K_BACKSPACE:
                 self.text = self.text[:-1]
             else:

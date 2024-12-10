@@ -154,7 +154,6 @@ class Options_Screen(D.Display):
                     elif self.check_valid_name(filename):
                         self.save_game(filename + ".json")
                         self.message_label = C.FONT.render("Game saved!", True, C.WHITE_FONT_COLOR)
-                        print("Settings saved clicked")
                     else:
                         self.message_label = C.FONT.render("Invalid file name", True, C.RED)
                 elif self.back_button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:

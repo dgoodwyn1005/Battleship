@@ -21,12 +21,18 @@
         "3": {
             "username": "iech",
             "password": "321",
-            "wins": 2,
+            "wins": 9,
             "losses": 0
         },
         "4": {
             "username": "billy",
             "password": "wanda",
+            "wins": 0,
+            "losses": 0
+        },
+        "5": {
+            "username": "Wanda",
+            "password": "bito",
             "wins": 0,
             "losses": 0
         }
