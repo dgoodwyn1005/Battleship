@@ -12,12 +12,13 @@ class CPU(Player):
         self.board_size = board_size
         
         # Store adjacent tiles for targeting
-        self.targeting_queue = [(3,3)]
+
+        self.targeting_queue = []
 
         #Track last successful hit
         #self.last_hit = None
 
-    # The CPU will make a random move based on available coordinates
+    # The CPU will make a move based on if the targeting queue is empty or not
     def make_move(self, grid):
         """The CPU picks coordinates to attack randomly at first, and the CPU will target adjacent tiles
         if a hit is successful."""
@@ -43,7 +44,13 @@ class CPU(Player):
                 return None, None
         self.attacked_coords.add((row, col))
         # Call GameGrid's method to attack a tile.
-        return grid.attack_tile(row, col), (row, col)
+        result = grid.attack_tile(row, col)
+        print(f"Result of random attack: {result}")
+        if result != -1:
+            print(f"Hit at ({row}, {col})! Adding adjacent tiles.")
+            self.add_adjacent_tiles(row, col)
+        return result, (row, col)
+        
 
     def add_adjacent_tiles(self, row, col):
         """Add tiles adjacent to a hit to the targeting queue"""

@@ -37,7 +37,7 @@ class Sound(object):
     def toggle_music(self):
         """Toggle the music varible on and off which will enable or disable the music"""
         Sound.play_music = not Sound.play_music
-
+        
     def toggle_sounds(self):
         """Toggle the sound effects variable on and off which will enable or disable the sound effects"""
         Sound.play_sound_effects = not Sound.play_sound_effects

@@ -33,6 +33,7 @@ class GameGrid(object):
                     return False
         return True
 
+
     def grid_length(self):
         return self.width
 
@@ -46,10 +47,13 @@ class GameGrid(object):
         value = self.grid[index_x][index_y]
         if value != 6 and value != 7:       # If the tile has not been attacked
             if value == 0:                  # If the tile is empty
-                value = -1
+                value = -1 
                 self.grid[index_x][index_y] = 7  # Mark as miss
+                print(f"Attack at ({index_x}, {index_y}) was a miss") #DEBUG
                 return value
             else:
                 self.grid[index_x][index_y] = 6  # Mark as hit
+                print(f"Attack at ({index_x}, {index_y}) was a hit") #DEBUG
+
                 return value
         return -1

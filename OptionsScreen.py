@@ -30,6 +30,7 @@ class Options_Screen(D.Display):
                                     C.WHITE_FONT_COLOR)
         self.filename_textbox = TextBox(C.FILENAME_X, C.FILENAME_Y, C.FILENAME_WIDTH, C.FILENAME_HEIGHT, C.FONT)
         self.message_label = C.FONT.render("", True, C.WHITE_FONT_COLOR)
+
         # Data used to save the game
         self.player_grid = player_grid
         self.opponent_grid = opponent_grid
@@ -73,7 +74,6 @@ class Options_Screen(D.Display):
         # Draw the settings on the screen
         self.game_display.draw_settings("On" if SM.Sound.play_music else "Off",
                                         "On" if SM.Sound.play_sound_effects else "Off")
-
 
     def toggle_music(self):
         """Toggle the music on and off"""
