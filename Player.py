@@ -1,13 +1,9 @@
 import random
-class Player(object):
-    def __init__(self):
-        # keep track of coordinates that have already been attacked
-        self.attacked_coords = set()
-
+        
 
 class CPU(Player):
     def __init__(self, board_size):
-        
+        self.attacked_coords = set()
         super().__init__()
         self.board_size = board_size
         
