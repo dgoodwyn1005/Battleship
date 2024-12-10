@@ -5,12 +5,21 @@ pygame.init()
 
 # IMAGES Folder
 IMAGE_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/images"
+
 # FONTS Folder
 FONTS_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/fonts"
+
 # AUDIO Folder
 AUDIO_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/audio"
+
 # GAME Folder
 GAME_FOLDER = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + "/saved_games/"
+
+# Current Environment
+Environment = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+# Saved Account Document
+SAVED_ACCOUNT_DOCUMENT = Environment + "/saved_accounts.json"
 
 # GRID
 TILE_WIDTH = 40
@@ -23,6 +32,10 @@ Y_OFFSET = 75
 GAME_FONT = pygame.font.Font(FONTS_FOLDER + "/ka1.ttf", 20)
 OPPONENT_X_OFFSET = 900
 OPPONENT_Y_OFFSET = 80
+
+# DELAYS
+TURN_DELAY = 300
+
 
 # TEXT
 WHITE_FONT_COLOR = (255, 255, 255)
@@ -41,7 +54,6 @@ EXIT_Y = 610
 EXIT_WIDTH = 40
 EXIT_HEIGHT = 40
 EXIT_TEXT = "Exit"
-
 
 # ROTATE BUTTON
 ROTATE_X = 710
@@ -68,7 +80,6 @@ LIGHT_GREY = (101, 100, 100)
 DARK_GREEN = (105, 135, 165)
 HOVER_COLOR = (150, 150, 150)
 DARK_GREY = (145, 145, 145)
-
 
 # MAIN MENU SCREEN
 MENU_CAPTION = "Main Menu"
@@ -153,7 +164,6 @@ FILENAME_Y = 500
 FILENAME_WIDTH = 200
 FILENAME_HEIGHT = 60
 
-
 # Back button
 BACK_X = 0
 BACK_Y = 0
@@ -168,50 +178,60 @@ USERNAME_Y = 300
 USERNAME_WIDTH = 200
 USERNAME_HEIGHT = 50
 ACCOUNT_PASSWORD_OFFSET = 100
+
 # Sign in button
 SIGN_IN_X = 700
 SIGN_IN_Y = 500
 SIGN_IN_WIDTH = 200
 SIGN_IN_HEIGHT = 50
 SIGN_IN_TEXT = "Sign In"
+
 # Register button
 REGISTER_X = 495
 REGISTER_Y = 500
 REGISTER_WIDTH = 200
 REGISTER_HEIGHT = 50
 REGISTER_TEXT = "Create Account"
+
 # Text next to text fields
 USERNAME_TEXT = "Username:"
 PASSWORD_TEXT = "Password:"
 USER_PASS_OFFSET = 100
+
 # Account message
 ACCOUNT_MESSAGE_X = 595
 ACCOUNT_MESSAGE_Y = 200
 ACCOUNT_TEXT = "Enter your account information"
 ACCOUNT_FONT = pygame.font.SysFont(None, 70)
+
 # Account sign in
 TOTAL_WINS_TEXT = "Total Wins: "
 TOTAL_LOSSES_TEXT = "Total Losses: "
+
 # Load game button
 LOAD_X = 600
 LOAD_Y = 500
 LOAD_WIDTH = 200
 LOAD_HEIGHT = 50
 LOAD_TEXT = "Load Game"
+
 # Start game button offset
 START_OFFSET_X = 300
 START_OFFSET_Y = 200
+
 # Reset password button
 RESET_PASS_TEXT = "Reset Password"
 RESET_PASS_X = 600
 RESET_PASS_Y = 700
 RESET_PASS_WIDTH = 200
 RESET_PASS_HEIGHT = 50
+
 # Reset password text field
 RESET_TEXT_X = 600
 RESET_TEXT_Y = 630
 RESET_TEXT_WIDTH = 200
 RESET_TEXT_HEIGHT = 50
+
 # Sign out button
 SIGN_OUT_TEXT = "Sign Out"
 SIGN_OUT_X = 900
@@ -221,17 +241,20 @@ SIGN_OUT_HEIGHT = 50
 
 # Load Game Display
 LOAD_GAME_CAPTION = "Load Game"
+
 # File buttons
 FILE_BUTTON_Y = 100
 FILE_BUTTON_X = 600
 FILE_BUTTON_WIDTH = 200
 FILE_BUTTON_HEIGHT = 50
 FILE_Y_OFFSET = 60
+
 # Load Button
 LOAD_SAVED_BUTTON_X = 500
 LOAD_SAVED_BUTTON_Y = 500
 LOAD_MESSAGE_X = 610
 LOAD_MESSAGE_Y = 100
+
 # Delete Button
 DELETE_X = 200
 DELETE_Y = 500

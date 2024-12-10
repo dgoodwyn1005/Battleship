@@ -1,6 +1,7 @@
 import pygame.image
 import Constants as C
 
+
 class Ships(object):
 
     def __init__(self, ship_name: str, ship_length: int):
@@ -16,8 +17,6 @@ class Ships(object):
         """Loads the ship image"""
         return pygame.image.load(self.file_location)
 
-
     def check_sunken(self):
         """Checks if the ship is sunk"""
         return self.hit_count == self.length
-

@@ -7,6 +7,7 @@ import json
 import Board as BG
 import Account as A
 import AccountDisplay as AD
+import SoundManager as SM
 
 
 class LoadGameDisplay(D.Display):
@@ -28,11 +29,11 @@ class LoadGameDisplay(D.Display):
         self.total_files = 0
         self.total_background_height = 0
         self.user = user
+        self.sounds = SM.Sound()
 
     def create_buttons(self):
         self.screen.fill(C.BLUE)
         file_y = C.FILE_BUTTON_Y
-        # Draw background rectangle behind the file buttons
         if not os.path.exists(self.folder_path):  # Check if the folder exists
             # Display message if no files are found
             self.message_label = C.FONT.render("No saved games found", True, C.RED)
@@ -62,7 +63,6 @@ class LoadGameDisplay(D.Display):
                 board.player_turn = not data["current_turn"]
             count = 0
             for key in data.keys():
-                print(key)
                 if key.startswith("my_") or key.startswith("opp_"):  # To avoid the grid data and current turn data
                     if count == 5:
                         count = 0  # Reset the count to 0 after going through the first 5 ships
@@ -75,8 +75,8 @@ class LoadGameDisplay(D.Display):
                     ship.rotated = data[key][1]  # Add the direction of the ship
                     ship.sunken = data[key][2]  # Add the sunken status of the ship
                     ship.hit_count = data[key][3]  # Add the hit count of the ship
-                    print(ship.name, ship.head_coordinate, ship.rotated, ship.sunken, ship.hit_count)
                     count += 1
+            # Update the board with the loaded game data
             board.ship_count = 5
             board.startedBoard = True
             board.placeShips = False
@@ -89,6 +89,7 @@ class LoadGameDisplay(D.Display):
             board.startDisplay(board.main_loop)  # Start the game screen
 
     def main_loop(self):
+        """The main game loop for the load game screen"""
         self.create_buttons()  # Create the buttons for the saved games
         while self.running:
             for event in pygame.event.get():
@@ -100,20 +101,15 @@ class LoadGameDisplay(D.Display):
                         person = A.Account(self.username, self.user.password)
                         account_screen = AD.AccountDisplay(person)
                         account_screen.startDisplay(account_screen.main_loop)
-            # Draw a background for the file buttons
-            if self.total_files > 0:
-                initial_file_button_y = C.FILE_BUTTON_Y
-                self.total_background_height = self.total_files * C.FILE_BUTTON_HEIGHT + (
-                        self.total_files - 1) * C.FILE_Y_OFFSET
-                pygame.draw.rect(self.screen, C.DARK_GREY, (
-                    C.FILE_BUTTON_X - 10, initial_file_button_y + 20, C.FILE_BUTTON_WIDTH + 20,
-                    self.total_background_height))
+
             # Switch to hover colors for the buttons if the cursor is over them
             for button in self.screen_buttons:
                 if button.is_hovered():
                     button.color = C.HOVER_COLOR
                 else:
                     button.color = C.GREY
+                if button.is_clicked() and event.type == pygame.MOUSEBUTTONDOWN:
+                    self.sounds.play_sound("click")
                 # Handle when only the file buttons are clicked
                 if (button.is_clicked() and button != self.load_game_button and button != self.back_button and
                         button != self.delete_button):
@@ -130,7 +126,7 @@ class LoadGameDisplay(D.Display):
                 elif (button.is_clicked() and button == self.delete_button and event.type == pygame.MOUSEBUTTONDOWN
                       and self.user != None):
                     if self.selected_file != "":
-                        deleted = self.user.delete_game(self.selected_file)
+                        deleted = self.user.delete_game(self.selected_file + ".json")
                         if deleted:
                             self.message_label = C.FONT.render("File deleted successfully", True, C.WHITE_FONT_COLOR)
                             self.screen_buttons = [btn for btn in self.screen_buttons if btn != self.selected_file]

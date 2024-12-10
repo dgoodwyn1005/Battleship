@@ -84,34 +84,30 @@ class BattleScreen(D.Display):
     def check_win_condition(self):
         """Check if the game has been won"""
         if self.player_ships_remaining == 0:
-            self.sounds.stop_song("conflict")
-            self.sounds.play_song("lose")
+            self.sounds.stop_song("conflict")       # Stop the conflict song
+            self.sounds.play_song("lose")       # Playing the losing song
             self.message = "CPU Wins!"
-            self.game_display.draw_message(self.message)
+            self.game_display.draw_message(self.message)    # Draw the message on the screen
             pygame.display.flip()
             self.game_over = True
             self.exit_button.draw(self.screen)
             if self.signed_in:
                 self.user.update_win_loss(False)
-                self.user.delete_game(self.game_name)
-                print("Game should be deleted")
-                print("Wins updated")
             pygame.time.delay(5000)
-            # self.running = False
         elif self.cpu_ships_remaining == 0:
-            self.sounds.stop_song("conflict")
-            self.sounds.play_song("victory")
+            self.sounds.stop_song("conflict")     # Stop the conflict song
+            self.sounds.play_song("victory")     # Play the victory song
             self.message = "{} Wins!".format(self.username)
-            self.game_display.draw_message(self.message)
+            self.game_display.draw_message(self.message)    # Draw the message on the screen
             pygame.display.flip()
             if self.signed_in:
-                self.user.update_win_loss(True)
-                self.user.delete_game(self.game_name)
-                print("Game should be deleted")
-                print("Wins updated")
+                self.user.update_win_loss(True)    # Update the win loss record for the user
             self.game_over = True
             self.exit_button.draw(self.screen)
             pygame.time.delay(5000)
+        if self.game_over and self.loaded_game:
+            self.user.delete_game(self.game_name)
+
 
             
     # Main Game Loop
@@ -120,7 +116,7 @@ class BattleScreen(D.Display):
         self.create_grid()  # Draw the grid on the screen
         self.draw_preview_ship()  # Draw the ship on the screen
         if not self.loaded_game:    # If the game is not loaded, place CPU ships
-            self.cpu_place_ships()         # Place CPU ships on the grid
+            self.cpu_place_ships()   # Place CPU ships on the grid
         else:       # Redraw the loaded game
             # self.update_ships_from_file(self.ships)
             # self.update_ships_from_file(self.opponent_ships)
@@ -438,7 +434,7 @@ class BattleScreen(D.Display):
             while not placed:
                 rotated = random.choice([True, False])  # Randomly choose if the ship should be rotated
                 ship.rotated = rotated      # Set the ship attribute as rotated or not
-                if not ship.rotated:
+                if not ship.rotated:  # Pick a random row and column based on the ship length and rotation
                     row = random.randint(0, self.opponent_grid.grid_length() - 1)
                     col = random.randint(0, self.opponent_grid.grid_height() - ship.length)
                 else:
@@ -508,13 +504,14 @@ class BattleScreen(D.Display):
                             self.my_attacks.add((offset_x, offset_y, "miss"))
 
     def set_total_ships_remaining(self, ship_list, player):
-        """Set the total number of ships remaining for the playe and CPU after loading from a game file"""
+        """Set the total number of ships remaining for the players and CPU after loading from a game file"""
         for ship in ship_list:
             if ship.sunken:
                 if player:
                     self.player_ships_remaining -= 1
                 else:
                     self.cpu_ships_remaining -= 1
+
 
 if __name__ == "__main__":
     battle = BattleScreen()
