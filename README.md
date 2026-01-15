@@ -5,7 +5,7 @@ Software Engineering course project (Fall 2024).
 
 This project emphasizes Object-Oriented Programming (OOP) concepts such as class design, encapsulation, and separation of game logic, UI, and data handling.
 
-![Screenshot](/screenshots/home)
+![Screenshot](/screenshots/main_menu)
 
 **Game Features**
 Classic Battleship Gameplay
@@ -16,7 +16,7 @@ Follows standard Battleship rules
 Turn-based play against a CPU opponent
 
 
-![Screenshot](/screenshots/)
+![Screenshot](/screenshots/ship_placement)
 
 CPU Opponent
 
